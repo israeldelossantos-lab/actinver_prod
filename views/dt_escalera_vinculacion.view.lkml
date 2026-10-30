@@ -86,11 +86,25 @@ view: dt_escalera_vinculacion {
     sql: ${TABLE}.total_productos_validos ;;
   }
 
+  dimension: escalon_orden {
+    type: number
+    hidden: yes
+    sql: CASE
+      WHEN ${TABLE}.escalon_vinculacion = 'Sin eje' THEN 1
+      WHEN ${TABLE}.escalon_vinculacion = 'Solo eje' THEN 2
+      WHEN ${TABLE}.escalon_vinculacion = 'Eje + 1' THEN 3
+      WHEN ${TABLE}.escalon_vinculacion = 'Eje + 2' THEN 4
+      WHEN ${TABLE}.escalon_vinculacion = 'Eje + 3 o más' THEN 5
+      ELSE 6
+    END ;;
+  }
+
   dimension: escalon_vinculacion {
     type: string
     label: "Escalón de Vinculación"
     description: "Nivel en la escalera de vinculación (Solo eje, Eje + 1, Eje + 2, Eje + 3 o más, Sin eje)"
     sql: ${TABLE}.escalon_vinculacion ;;
+    order_by_field: escalon_orden
   }
 
   dimension: es_solo_eje {

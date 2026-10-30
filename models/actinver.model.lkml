@@ -18,6 +18,14 @@ access_grant: ver_pii {
 }
 
 # ----------------------------------------------------
+# CAPA DE MAPA: ESTADOS DE MÉXICO (TOPOJSON)
+# ----------------------------------------------------
+map_layer: mexico_estados {
+  file: "/maps/mexico_estados.topojson"
+  property_key: "state_name"
+}
+
+# ----------------------------------------------------
 # 1. EXPLORE: CLIENTES E INVERSIONES (VISIÓN 360)
 # ----------------------------------------------------
 explore: clientes {
@@ -66,6 +74,19 @@ explore: clientes {
     sql_on: ${cuenta.id_centro_financiero} = ${catcentrofinanciero.id_centro_financiero_cve} ;;
     relationship: many_to_one
     required_joins: [cuenta]
+  }
+
+  join: dt_centro_ubicacion {
+    type: left_outer
+    sql_on: ${catcentrofinanciero.centro_financiero} = ${dt_centro_ubicacion.centro_financiero} ;;
+    relationship: many_to_one
+    required_joins: [catcentrofinanciero]
+  }
+
+  join: dt_tenencia_familia {
+    type: left_outer
+    sql_on: CAST(${clientes.id_cliente_key} AS STRING) = ${dt_tenencia_familia.customer_id} ;;
+    relationship: one_to_many
   }
 
   join: catcanaloriginacion {
@@ -269,7 +290,6 @@ explore: afinidad_productos {
   label: "5. Afinidad de Productos (Cross-Sell)"
   description: "Matriz de co-ocurrencia, confianza y lift entre productos de inversión"
 }
-
 
 # ----------------------------------------------------
 # 6. EXPLORE: CALIDAD DE DATOS (TRANSVERSAL)

@@ -13,6 +13,10 @@ view: cliente {
     label: "ID de Cliente (Numérico)"
     required_access_grants: [ver_pii]
     sql: ${TABLE}.id_cliente_num ;;
+    link: {
+      label: "Ver ficha del cliente"
+      url: "/dashboards/actinver::ficha_cliente?Cliente={{ value }}"
+    }
   }
 
   dimension: id_cliente {
@@ -33,6 +37,22 @@ view: cliente {
     type: number
     label: "ID Persona"
     sql: ${TABLE}.id_persona ;;
+  }
+
+  dimension: url_image {
+    type: string
+    label: "URL Imagen"
+    description: "URL de la foto de perfil del cliente (RandomUser API)"
+    sql: ${TABLE}.url_image ;;
+    html: <img src="{{ value }}" width="36" height="36" style="border-radius: 50%; object-fit: cover;" /> ;;
+  }
+
+  dimension: foto {
+    type: string
+    label: "Foto"
+    description: "Avatar circular para tablas y fichas"
+    sql: ${TABLE}.url_image ;;
+    html: <img src="{{ value }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"> ;;
   }
 
   dimension: id_asesor {

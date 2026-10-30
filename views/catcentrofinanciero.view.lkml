@@ -17,6 +17,10 @@ view: catcentrofinanciero {
     type: string
     label: "Centro Financiero (Nombre)"
     sql: INITCAP(${TABLE}.centro_financiero) ;;
+    link: {
+      label: "Ver clientes de la sucursal"
+      url: "/dashboards/actinver::sucursal_detalle?Centro+financiero={{ value | url_encode }}"
+    }
   }
 
   dimension: activo {
@@ -46,6 +50,11 @@ view: catcentrofinanciero {
   dimension: estado_nombre {
     type: string
     label: "Estado Normalizado"
+    map_layer_name: mexico_estados
+    link: {
+      label: "Ver sucursales de {{ value }}"
+      url: "/dashboards/actinver::desempeno_sucursales?Estado={{ value | url_encode }}"
+    }
     sql: CASE
       WHEN ${TABLE}.centro_financiero LIKE '%CORPORATIVO%' OR ${TABLE}.centro_financiero LIKE 'BANCA%' THEN 'Sin ubicación física'
       WHEN SPLIT(${TABLE}.centro_financiero, ' ')[OFFSET(0)] IN ('CDMX', 'DF') THEN 'Ciudad de México'
