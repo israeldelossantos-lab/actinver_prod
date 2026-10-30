@@ -16,7 +16,7 @@ view: catcentrofinanciero {
   dimension: centro_financiero {
     type: string
     label: "Centro Financiero (Nombre)"
-    sql: ${TABLE}.centro_financiero ;;
+    sql: INITCAP(${TABLE}.centro_financiero) ;;
   }
 
   dimension: activo {
