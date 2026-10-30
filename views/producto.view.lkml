@@ -1,17 +1,17 @@
 view: producto {
-  sql_table_name: `@{dataset_actinver}.PRODUCTO` ;;
+  sql_table_name: `@{dataset_seguros}.PRODUCTO` ;;
 
   dimension: id_producto {
     primary_key: yes
     type: number
-    label: "ID Producto Seguros"
+    label: "ID Producto"
     sql: ${TABLE}.ID_PRODUCTO ;;
   }
 
-  dimension: producto {
-    type: string
-    label: "Producto de Seguros"
-    sql: ${TABLE}.PRODUCTO ;;
+  dimension: id_lob {
+    type: number
+    label: "ID LOB"
+    sql: ${TABLE}.ID_LOB ;;
   }
 
   dimension: lob {
@@ -20,10 +20,28 @@ view: producto {
     sql: ${TABLE}.LOB ;;
   }
 
+  dimension: ramo {
+    type: string
+    label: "Ramo de Seguro"
+    sql: ${lob} ;;
+  }
+
+  dimension: id_sublob {
+    type: number
+    label: "ID Sub LOB"
+    sql: ${TABLE}.ID_SUBLOB ;;
+  }
+
   dimension: sublob {
     type: string
-    label: "Sublínea de Negocio (SubLOB)"
+    label: "Sub Línea de Negocio"
     sql: ${TABLE}.SUBLOB ;;
+  }
+
+  dimension: producto {
+    type: string
+    label: "Producto de Seguro"
+    sql: ${TABLE}.PRODUCTO ;;
   }
 
   dimension: baja_logica {
@@ -33,6 +51,6 @@ view: producto {
 
   measure: count {
     type: count
-    label: "Total Catálogo Productos Seguros"
+    label: "Total Productos Seguro"
   }
 }

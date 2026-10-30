@@ -1,11 +1,26 @@
 view: prima_emitida_2026 {
-  sql_table_name: `@{dataset_actinver}.PRIMA_EMITIDA_2026` ;;
+  sql_table_name: `@{dataset_seguros}.PRIMA_EMITIDA_2026` ;;
 
   dimension: key_emision {
     primary_key: yes
     hidden: yes
     type: string
-    sql: CONCAT(${TABLE}.POLIZA, '_', CAST(${TABLE}.ENDOSO AS STRING), '_', CAST(${TABLE}.RECIBO AS STRING), '_', CAST(${TABLE}.ITEM AS STRING)) ;;
+    sql: CONCAT(
+      CAST(${TABLE}.POLIZA AS STRING), '|',
+      CAST(${TABLE}.ENDOSO AS STRING), '|',
+      CAST(${TABLE}.RECIBO AS STRING), '|',
+      CAST(${TABLE}.EXHIBICION AS STRING), '|',
+      CAST(${TABLE}.ITEM AS STRING), '|',
+      CAST(${TABLE}.ID_COBERTURA AS STRING), '|',
+      CAST(${TABLE}.ID_RIESGO_CONTABLE AS STRING), '|',
+      CAST(${TABLE}.ID_TIPO_TRANSACCION AS STRING)
+    ) ;;
+  }
+
+  dimension: poliza_key {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.POLIZA ;;
   }
 
   dimension: poliza {
@@ -26,10 +41,28 @@ view: prima_emitida_2026 {
     sql: ${TABLE}.RECIBO ;;
   }
 
+  dimension: exhibicion {
+    type: number
+    label: "Exhibición"
+    sql: ${TABLE}.EXHIBICION ;;
+  }
+
   dimension: item {
     type: number
     label: "Item"
     sql: ${TABLE}.ITEM ;;
+  }
+
+  dimension: id_cobertura {
+    type: number
+    label: "ID Cobertura"
+    sql: ${TABLE}.ID_COBERTURA ;;
+  }
+
+  dimension: id_riesgo_contable {
+    type: number
+    label: "ID Riesgo Contable"
+    sql: ${TABLE}.ID_RIESGO_CONTABLE ;;
   }
 
   dimension: baja_logica {
@@ -105,7 +138,7 @@ view: prima_emitida_2026 {
   measure: count_polizas {
     type: count_distinct
     label: "Pólizas Emitidas Únicas"
-    sql: ${poliza} ;;
+    sql: ${poliza_key} ;;
     value_format_name: decimal_0
   }
 

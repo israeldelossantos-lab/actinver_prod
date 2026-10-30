@@ -1,17 +1,32 @@
 view: cliente {
-  sql_table_name: `@{dataset_actinver}.cliente` ;;
+  sql_table_name: `@{dataset_spine}.cliente` ;;
+
+  dimension: id_cliente_key {
+    primary_key: yes
+    hidden: yes
+    type: number
+    sql: ${TABLE}.id_cliente_num ;;
+  }
 
   dimension: id_cliente_num {
-    primary_key: yes
     type: number
     label: "ID de Cliente (Numérico)"
+    required_access_grants: [ver_pii]
     sql: ${TABLE}.id_cliente_num ;;
   }
 
   dimension: id_cliente {
     type: number
     label: "ID de Cliente"
+    required_access_grants: [ver_pii]
     sql: ${TABLE}.id_cliente ;;
+  }
+
+  dimension: cliente_ref {
+    type: string
+    label: "Referencia Cliente"
+    description: "Identificador anonimizado de cliente para visualizaciones públicas"
+    sql: CONCAT('***', SUBSTR(CAST(${TABLE}.id_cliente_num AS STRING), -4)) ;;
   }
 
   dimension: id_persona {
@@ -121,11 +136,26 @@ view: cliente {
     value_format_name: decimal_0
   }
 
+  measure: clientes_con_seguro {
+    type: count
+    label: "Clientes con Seguro"
+    filters: [cliente_seguro: "yes"]
+    value_format_name: decimal_0
+  }
+
+  measure: pct_clientes_con_seguro {
+    type: number
+    label: "% Clientes con Seguro"
+    sql: 1.0 * ${clientes_con_seguro} / NULLIF(${count}, 0) ;;
+    value_format: "0.0%"
+  }
+
   measure: clientes_con_biometrico {
     type: count
     label: "Clientes con Biométrico Facial"
     filters: [biometrico_facial: "yes"]
     value_format_name: decimal_0
+    hidden: yes
   }
 
   measure: pct_cumplimiento_biometrico {
@@ -133,5 +163,6 @@ view: cliente {
     label: "% Cumplimiento Biométrico"
     sql: 1.0 * ${clientes_con_biometrico} / NULLIF(${count}, 0) ;;
     value_format: "0.0%"
+    hidden: yes
   }
 }

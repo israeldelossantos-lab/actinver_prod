@@ -1,5 +1,5 @@
 view: origen {
-  sql_table_name: `@{dataset_actinver}.ORIGEN` ;;
+  sql_table_name: `@{dataset_seguros}.ORIGEN` ;;
 
   dimension: id_origen {
     primary_key: yes
@@ -10,13 +10,8 @@ view: origen {
 
   dimension: origen {
     type: string
-    label: "Origen"
+    label: "Origen de Seguros"
     sql: ${TABLE}.ORIGEN ;;
-  }
-
-  dimension: baja_logica {
-    type: number
-    sql: ${TABLE}.BAJA_LOGICA ;;
   }
 
   measure: count {

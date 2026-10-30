@@ -1,21 +1,22 @@
 view: dt_desviacion_pago {
   derived_table: {
     sql: SELECT
-        CONCAT(POLIZA, '_', RECIBO, '_', CAST(EXHIBICION AS STRING)) AS key_recibo,
+        CONCAT(POLIZA, '_', RECIBO, '_', CAST(EXHIBICION AS STRING), '_', CAST(ID_RIESGO_CONTABLE AS STRING)) AS key_recibo,
         POLIZA AS poliza,
         RECIBO AS recibo,
         EXHIBICION AS exhibicion,
+        ID_RIESGO_CONTABLE AS id_riesgo_contable,
         FECHA_INICIO_VIGENCIA_RECIBO AS fecha_inicio_vigencia_recibo,
         FECHA_PAGO AS fecha_pago,
         DATE_DIFF(DATE(FECHA_PAGO), DATE(FECHA_INICIO_VIGENCIA_RECIBO), DAY) AS dias_desviacion,
         CASE
           WHEN DATE_DIFF(DATE(FECHA_PAGO), DATE(FECHA_INICIO_VIGENCIA_RECIBO), DAY) < 0 THEN '1. Anticipado (< 0 d)'
-          WHEN DATE_DIFF(DATE(FECHA_PAGO), DATE(FECHA_INICIO_VIGENCIA_RECIBO), DAY) <= 15 THEN '2. Gracia (0-15 d)'
-          WHEN DATE_DIFF(DATE(FECHA_PAGO), DATE(FECHA_INICIO_VIGENCIA_RECIBO), DAY) <= 30 THEN '3. Atrasado (16-30 d)'
-          ELSE '4. Crítico (> 30 d)'
+          WHEN DATE_DIFF(DATE(FECHA_PAGO), DATE(FECHA_INICIO_VIGENCIA_RECIBO), DAY) <= @{umbral_gracia_dias} THEN CONCAT('2. Gracia (0-', CAST(@{umbral_gracia_dias} AS STRING), ' d)')
+          WHEN DATE_DIFF(DATE(FECHA_PAGO), DATE(FECHA_INICIO_VIGENCIA_RECIBO), DAY) <= @{umbral_critico_dias} THEN CONCAT('3. Atrasado (', CAST(@{umbral_gracia_dias} + 1 AS STRING), '-', CAST(@{umbral_critico_dias} AS STRING), ' d)')
+          ELSE CONCAT('4. Crítico (> ', CAST(@{umbral_critico_dias} AS STRING), ' d)')
         END AS rango_desviacion_pago,
         PRIMA_TOTAL AS prima_total
-      FROM `@{dataset_actinver}.PRIMA_PAGADA_2026`
+      FROM `@{dataset_seguros}.PRIMA_PAGADA_2026`
       WHERE BAJA_LOGICA = 0 ;;
   }
 
@@ -26,9 +27,16 @@ view: dt_desviacion_pago {
     sql: ${TABLE}.key_recibo ;;
   }
 
+  dimension: poliza_key {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.poliza ;;
+  }
+
   dimension: poliza {
     type: string
     label: "Póliza"
+    required_access_grants: [ver_pii]
     sql: ${TABLE}.poliza ;;
   }
 
@@ -42,6 +50,12 @@ view: dt_desviacion_pago {
     type: number
     label: "Exhibición"
     sql: ${TABLE}.exhibicion ;;
+  }
+
+  dimension: id_riesgo_contable {
+    type: number
+    label: "ID Riesgo Contable"
+    sql: ${TABLE}.id_riesgo_contable ;;
   }
 
   dimension_group: fecha_inicio_vigencia_recibo {
@@ -73,13 +87,13 @@ view: dt_desviacion_pago {
   dimension: es_a_tiempo {
     type: yesno
     label: "Cobranza a Tiempo (Gracia o Anticipado)"
-    sql: ${dias_desviacion} <= 15 ;;
+    sql: ${dias_desviacion} <= @{umbral_gracia_dias} ;;
   }
 
   dimension: es_critico {
     type: yesno
     label: "Cobranza Crítica (> 30 días)"
-    sql: ${dias_desviacion} > 30 ;;
+    sql: ${dias_desviacion} > @{umbral_critico_dias} ;;
   }
 
   dimension: prima_total {

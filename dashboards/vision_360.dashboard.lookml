@@ -16,7 +16,7 @@
       required: false
       model: actinver
       explore: clientes
-      field: clientes.id_cliente_num
+      field: clientes.cliente_ref
 
     - name: asesor
       title: "Asesor"
@@ -51,7 +51,7 @@
   elements:
     - name: header_tile
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Visión 360 del Cliente (Adaptado)</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Perfil integral de tenencia de inversión, expediente KYC, cruce con pólizas de seguros y concentración por asesor. [VALIDAR] Cruce seguros ↔ clientes vía ID_NUMERO_RELACION (~70% emparejamiento). Sin metas de asesor por ausencia de fuente.</p></div>"
+      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Visión 360 del Cliente (Adaptado)</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Perfil integral de tenencia de inversión, expediente, cruce con pólizas de seguros y concentración por asesor.</p></div>"
       row: 0
       col: 0
       width: 24
@@ -64,7 +64,7 @@
       type: single_value
       fields: [clientes.count]
       listen:
-        cliente_id: clientes.id_cliente_num
+        cliente_id: clientes.cliente_ref
         asesor: catasesor.asesor_etiqueta
         centro_financiero: catcentrofinanciero.centro_financiero
         entidad_bancaria: cuenta.tipo_entidad_bancaria
@@ -80,7 +80,7 @@
       type: single_value
       fields: [clientes.clientes_patrimoniales_awm]
       listen:
-        cliente_id: clientes.id_cliente_num
+        cliente_id: clientes.cliente_ref
         asesor: catasesor.asesor_etiqueta
         centro_financiero: catcentrofinanciero.centro_financiero
         entidad_bancaria: cuenta.tipo_entidad_bancaria
@@ -90,13 +90,13 @@
       height: 3
 
     - name: kpi_cumplimiento_kyc
-      title: "% Cumplimiento Biométrico KYC"
+      title: "% Clientes con Seguro"
       model: actinver
       explore: clientes
       type: single_value
-      fields: [clientes.pct_cumplimiento_biometrico]
+      fields: [clientes.pct_clientes_con_seguro]
       listen:
-        cliente_id: clientes.id_cliente_num
+        cliente_id: clientes.cliente_ref
         asesor: catasesor.asesor_etiqueta
         centro_financiero: catcentrofinanciero.centro_financiero
         entidad_bancaria: cuenta.tipo_entidad_bancaria
@@ -106,13 +106,13 @@
       height: 3
 
     - name: kpi_venta_cruzada
-      title: "Pólizas Ligadas a Clientes Inversión"
+      title: "Clientes Inversión con Seguro"
       model: actinver
       explore: clientes
       type: single_value
-      fields: [polizas.count_polizas]
+      fields: [clientes.clientes_con_seguro]
       listen:
-        cliente_id: clientes.id_cliente_num
+        cliente_id: clientes.cliente_ref
         asesor: catasesor.asesor_etiqueta
         centro_financiero: catcentrofinanciero.centro_financiero
         entidad_bancaria: cuenta.tipo_entidad_bancaria
@@ -148,14 +148,14 @@
       title: "¿Qué producto le falta a cada cliente y cuánto potencial hay? (Venta Cruzada)"
       note_state: collapsed
       note_display: below
-      note_text: "Tenencia de productos de inversión cruzada con seguros [VALIDAR]."
+      note_text: "Tenencia de productos de inversión cruzada con seguros."
       model: actinver
       explore: clientes
       type: looker_column
-      fields: [dt_escalera_vinculacion.escalon_vinculacion, polizas.count_polizas]
-      sorts: [polizas.count_polizas desc]
+      fields: [dt_escalera_vinculacion.escalon_vinculacion, clientes.clientes_con_seguro]
+      sorts: [clientes.clientes_con_seguro desc]
       series_colors:
-        polizas.count_polizas: "#0F6FF5"
+        clientes.clientes_con_seguro: "#0F6FF5"
       x_axis_gridlines: false
       y_axis_gridlines: true
       listen:
@@ -171,25 +171,22 @@
       title: "¿Cuál es la situación completa de este cliente hoy? (Ficha 360 Detallada)"
       note_state: collapsed
       note_display: below
-      note_text: "Expediente KYC, escalón de vinculación, asesor asignado y seguros contratados."
+      note_text: "Perfil de cliente, escalón de vinculación, recomendación, asesor asignado y tenencia de seguro."
       model: actinver
       explore: clientes
       type: looker_grid
       fields: [
-        clientes.id_cliente_num,
+        clientes.cliente_ref,
         clientes.tipo_persona_desc,
         clientes.segmento_awm,
         dt_escalera_vinculacion.escalon_vinculacion,
         dt_escalera_vinculacion.total_productos_validos,
         dt_siguiente_producto_sugerido.siguiente_producto_sugerido,
-        clientes.biometrico_facial,
-        clientes.carta_manifiesto,
-        clientes.fiel_vigente,
+        clientes.cliente_seguro,
         catasesor.asesor_etiqueta,
-        catcentrofinanciero.centro_financiero,
-        polizas.count_polizas
+        catcentrofinanciero.centro_financiero
       ]
-      sorts: [clientes.id_cliente_num asc]
+      sorts: [clientes.cliente_ref asc]
       limit: 100
       show_view_names: false
       show_row_numbers: true
@@ -197,7 +194,7 @@
       header_background_color: "#1A2433"
       header_font_color: "#FFFFFF"
       listen:
-        cliente_id: clientes.id_cliente_num
+        cliente_id: clientes.cliente_ref
         asesor: catasesor.asesor_etiqueta
         centro_financiero: catcentrofinanciero.centro_financiero
         entidad_bancaria: cuenta.tipo_entidad_bancaria
@@ -221,7 +218,7 @@
         clientes.count,
         dt_escalera_vinculacion.productos_promedio,
         dt_escalera_vinculacion.pct_solo_eje,
-        polizas.count_polizas
+        clientes.clientes_con_seguro
       ]
       sorts: [clientes.count desc]
       limit: 50

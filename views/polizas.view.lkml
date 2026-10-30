@@ -1,5 +1,5 @@
 view: polizas {
-  sql_table_name: `@{dataset_actinver}.POLIZAS` ;;
+  sql_table_name: `@{dataset_seguros}.POLIZAS` ;;
 
   dimension: poliza_riesgo_key {
     primary_key: yes
@@ -8,22 +8,31 @@ view: polizas {
     sql: CONCAT(${TABLE}.POLIZA, '_', CAST(${TABLE}.ID_RIESGO_CONTABLE AS STRING)) ;;
   }
 
+  dimension: poliza_key {
+    hidden: yes
+    type: string
+    sql: ${TABLE}.POLIZA ;;
+  }
+
   dimension: poliza {
     type: string
     label: "Póliza"
     sql: ${TABLE}.POLIZA ;;
+    required_access_grants: [ver_pii]
+  }
+
+  dimension: poliza_ref {
+    type: string
+    label: "Póliza (Enmascarada)"
+    description: "Identificador enmascarado visible para todos los usuarios"
+    sql: CONCAT('***', SUBSTR(CAST(${TABLE}.POLIZA AS STRING), -4)) ;;
   }
 
   dimension: poliza_anterior {
     type: string
     label: "Póliza Anterior"
     sql: ${TABLE}.POLIZA_ANTERIOR ;;
-  }
-
-  dimension: es_renovacion {
-    type: yesno
-    label: "Es Renovación"
-    sql: (${TABLE}.POLIZA_ANTERIOR IS NOT NULL AND ${TABLE}.POLIZA_ANTERIOR != '') OR ${TABLE}.ID_TIPO_TRANSACCION = 2 ;;
+    required_access_grants: [ver_pii]
   }
 
   dimension: baja_logica {
@@ -87,12 +96,6 @@ view: polizas {
     sql: ${TABLE}.ID_TIPO_POLIZA ;;
   }
 
-  dimension: id_tipo_transaccion {
-    type: number
-    label: "ID Tipo Transacción"
-    sql: ${TABLE}.ID_TIPO_TRANSACCION ;;
-  }
-
   dimension: id_via_pago {
     type: number
     label: "ID Vía Pago"
@@ -125,30 +128,7 @@ view: polizas {
   measure: count_polizas {
     type: count_distinct
     label: "Total Pólizas Únicas"
-    sql: ${poliza} ;;
+    sql: ${TABLE}.POLIZA ;;
     value_format_name: decimal_0
-  }
-
-  measure: polizas_renovacion {
-    type: count_distinct
-    label: "Pólizas Renovadas"
-    sql: ${poliza} ;;
-    filters: [es_renovacion: "yes"]
-    value_format_name: decimal_0
-  }
-
-  measure: polizas_nuevo_negocio {
-    type: count_distinct
-    label: "Pólizas Nuevo Negocio"
-    sql: ${poliza} ;;
-    filters: [es_renovacion: "no"]
-    value_format_name: decimal_0
-  }
-
-  measure: pct_renovacion {
-    type: number
-    label: "% Pólizas Renovadas"
-    sql: 1.0 * ${polizas_renovacion} / NULLIF(${count_polizas}, 0) ;;
-    value_format: "0.0%"
   }
 }

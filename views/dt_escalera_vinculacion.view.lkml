@@ -62,13 +62,20 @@ view: dt_escalera_vinculacion {
         CASE WHEN (COALESCE(HAS_WARRANS, 0) + COALESCE(HAS_NOTAS_ESTRUCTURADAS, 0)) > 0 THEN 1 ELSE 0 END AS tiene_derivados_estructurados,
         CASE WHEN (COALESCE(HAS_MEXDOLAR, 0) + COALESCE(HAS_SAVING, 0) + COALESCE(HAS_EFECTIVO, 0)) > 0 THEN 1 ELSE 0 END AS tiene_divisas_ahorro,
         CASE WHEN COALESCE(HAS_CREDITO, 0) > 0 THEN 1 ELSE 0 END AS tiene_credito
-      FROM `@{dataset_actinver}.CLIENTE_PRODUCTO_09_10_2026` ;;
+      FROM `@{dataset_cliente_producto}.CLIENTE_PRODUCTO_09_10_2026` ;;
+  }
+
+  dimension: customer_key {
+    primary_key: yes
+    hidden: yes
+    type: string
+    sql: ${TABLE}.customer_id ;;
   }
 
   dimension: customer_id {
-    primary_key: yes
     type: string
     label: "ID de Cliente"
+    required_access_grants: [ver_pii]
     sql: ${TABLE}.customer_id ;;
   }
 
@@ -135,7 +142,8 @@ view: dt_escalera_vinculacion {
   }
 
   measure: count {
-    type: count
+    type: count_distinct
+    sql: ${customer_key} ;;
     label: "Total Clientes con Tenencia"
     value_format_name: decimal_0
   }
@@ -148,7 +156,8 @@ view: dt_escalera_vinculacion {
   }
 
   measure: clientes_solo_eje {
-    type: count
+    type: count_distinct
+    sql: ${customer_key} ;;
     label: "Clientes Solo Eje"
     filters: [escalon_vinculacion: "Solo eje"]
     value_format_name: decimal_0
@@ -162,7 +171,8 @@ view: dt_escalera_vinculacion {
   }
 
   measure: clientes_multiproducto {
-    type: count
+    type: count_distinct
+    sql: ${customer_key} ;;
     label: "Clientes Multiproducto (2+)"
     filters: [es_multiproducto: "yes"]
     value_format_name: decimal_0

@@ -1,5 +1,5 @@
 view: tipo_poliza {
-  sql_table_name: `@{dataset_actinver}.TIPO_POLIZA` ;;
+  sql_table_name: `@{dataset_seguros}.TIPO_POLIZA` ;;
 
   dimension: id_tipo_poliza {
     primary_key: yes
@@ -14,13 +14,8 @@ view: tipo_poliza {
     sql: ${TABLE}.TIPO_POLIZA ;;
   }
 
-  dimension: baja_logica {
-    type: number
-    sql: ${TABLE}.BAJA_LOGICA ;;
-  }
-
   measure: count {
     type: count
-    label: "Total Tipos de Póliza"
+    label: "Total Tipos Póliza"
   }
 }

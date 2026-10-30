@@ -1,5 +1,5 @@
 view: cuenta {
-  sql_table_name: `@{dataset_actinver}.cuenta` ;;
+  sql_table_name: `@{dataset_spine}.cuenta` ;;
 
   dimension: id_cuenta {
     primary_key: yes
@@ -14,6 +14,7 @@ view: cuenta {
 
   dimension: cuenta_flex {
     type: string
+    required_access_grants: [ver_pii]
     sql: ${TABLE}.cuenta_flex ;;
   }
 
@@ -79,6 +80,7 @@ view: cuenta {
 
   dimension: num_cuenta {
     type: string
+    required_access_grants: [ver_pii]
     sql: ${TABLE}.num_cuenta ;;
   }
 

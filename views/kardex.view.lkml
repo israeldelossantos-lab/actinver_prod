@@ -1,11 +1,12 @@
 view: kardex {
-  sql_table_name: `@{dataset_actinver}.KARDEX` ;;
+  sql_table_name: `@{dataset_seguros}.KARDEX` ;;
 
   dimension: nomina {
     primary_key: yes
     type: string
-    label: "Nómina Asesor [VALIDAR: id_asesor_cve]"
-    sql: ${TABLE}.NOMINA ;;
+    label: "Nómina Asesor"
+    description: "[VALIDAR] En producción cruza 98 %; el dummy no lo replica"
+    sql: LTRIM(CAST(${TABLE}.NOMINA AS STRING), '0') ;;
   }
 
   dimension: puesto {

@@ -1,5 +1,5 @@
 view: catasesor {
-  sql_table_name: `@{dataset_actinver}.catasesor` ;;
+  sql_table_name: `@{dataset_spine}.catasesor` ;;
 
   dimension: id_asesor_cve {
     primary_key: yes

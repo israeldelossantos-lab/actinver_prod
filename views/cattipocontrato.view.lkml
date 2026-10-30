@@ -1,10 +1,9 @@
 view: cattipocontrato {
-  sql_table_name: `@{dataset_actinver}.cattipocontrato` ;;
+  sql_table_name: `@{dataset_spine}.cattipocontrato` ;;
 
   dimension: id_tipo_contrato {
     primary_key: yes
     type: number
-    label: "ID Tipo Contrato"
     sql: ${TABLE}.id_tipo_contrato ;;
   }
 

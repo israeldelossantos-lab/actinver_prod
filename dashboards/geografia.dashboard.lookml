@@ -31,7 +31,7 @@
   elements:
     - name: header_tile
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Inteligencia Geográfica (Adaptado)</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Mapeo de cobertura y clientes utilizando el centro financiero como nodo de geolocalización. [VALIDAR] Estado derivado del prefijo del centro; ID_LOCALIDAD en seguros requiere validación contra catálogo INEGI. Indicadores de población objetivo y distancia a sucursal excluidos por requerir fuentes externas.</p></div>"
+      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Inteligencia Geográfica (Adaptado)</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Mapeo de cobertura y clientes utilizando el centro financiero como nodo de geolocalización. Estado derivado del prefijo del centro; división territorial oficial INEGI.</p></div>"
       row: 0
       col: 0
       width: 24
@@ -85,25 +85,19 @@
       height: 3
 
     - name: map_clientes_estado
-      title: "¿Dónde están mis clientes y la cobertura? (Mapa Geográfico de Puntos)"
+      title: "¿Dónde están mis clientes y la cobertura? (Mapa Geográfico por Estado)"
       note_state: collapsed
       note_display: below
-      note_text: "Concentración de clientes por sucursal con coordenadas de dim_sucursales."
+      note_text: "Concentración de clientes por entidad federativa mapeada."
       model: actinver
       explore: clientes
-      type: looker_map
-      fields: [dim_sucursales.ubicacion, dim_sucursales.sucursal_nombre, clientes.count]
+      type: looker_geo_choropleth
+      fields: [catcentrofinanciero.estado_nombre, clientes.count]
       sorts: [clientes.count desc]
-      limit: 100
-      map_plot_mode: points
-      map_marker_type: circle
-      map_marker_radius_mode: proportional_value
-      map_marker_radius_min: 6
-      map_marker_radius_max: 24
+      limit: 50
+      map: mexico_states
+      map_layer_name: mexico_states
       map_value_colors: ["#9EC5FF", "#002D6F"]
-      map_latitude: 23.6345
-      map_longitude: -102.5528
-      map_zoom: 5
       listen:
         estado: catcentrofinanciero.estado_nombre
         centro_financiero: catcentrofinanciero.centro_financiero
@@ -149,7 +143,7 @@
         clientes.count,
         dt_escalera_vinculacion.productos_promedio,
         dt_escalera_vinculacion.pct_solo_eje,
-        polizas.count_polizas
+        clientes.clientes_con_seguro
       ]
       sorts: [clientes.count desc]
       limit: 60

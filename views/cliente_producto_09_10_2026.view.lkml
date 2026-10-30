@@ -1,10 +1,17 @@
 view: cliente_producto_09_10_2026 {
-  sql_table_name: `@{dataset_actinver}.CLIENTE_PRODUCTO_09_10_2026` ;;
+  sql_table_name: `@{dataset_cliente_producto}.CLIENTE_PRODUCTO_09_10_2026` ;;
+
+  dimension: customer_key {
+    primary_key: yes
+    hidden: yes
+    type: string
+    sql: ${TABLE}.CUSTOMER_ID ;;
+  }
 
   dimension: customer_id {
-    primary_key: yes
     type: string
     label: "ID de Cliente (Tenencia)"
+    required_access_grants: [ver_pii]
     sql: ${TABLE}.CUSTOMER_ID ;;
   }
 

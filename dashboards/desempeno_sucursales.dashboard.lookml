@@ -41,7 +41,7 @@
   elements:
     - name: header_tile
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Desempeño de Sucursales</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Evaluación de penetración y oportunidad de vinculación por centro financiero. [VALIDAR] Estado derivado del prefijo del centro financiero; mapa integrado con dim_sucursales. Sustituye AUM: no hay saldos en la fuente.</p></div>"
+      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Desempeño de Sucursales</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Evaluación de penetración y oportunidad de vinculación por centro financiero. Estado derivado del prefijo del centro financiero; mapa integrado con división estatal oficial INEGI.</p></div>"
       row: 0
       col: 0
       width: 24
@@ -217,22 +217,16 @@
       title: "¿Dónde está la oportunidad en el país? (Distribución Territorial)"
       note_state: collapsed
       note_display: below
-      note_text: "Clientes y sucursales georreferenciadas."
+      note_text: "Concentración de clientes por entidad federativa de la red."
       model: actinver
       explore: clientes
-      type: looker_map
-      fields: [dim_sucursales.ubicacion, dim_sucursales.sucursal_nombre, clientes.count]
+      type: looker_geo_choropleth
+      fields: [catcentrofinanciero.estado_nombre, clientes.count]
       sorts: [clientes.count desc]
       limit: 50
-      map_plot_mode: points
-      map_marker_type: circle
-      map_marker_radius_mode: proportional_value
-      map_marker_radius_min: 5
-      map_marker_radius_max: 20
+      map: mexico_states
+      map_layer_name: mexico_states
       map_value_colors: ["#9EC5FF", "#002D6F"]
-      map_latitude: 23.6345
-      map_longitude: -102.5528
-      map_zoom: 5
       listen:
         centro_financiero: catcentrofinanciero.centro_financiero
         estado: catcentrofinanciero.estado_nombre

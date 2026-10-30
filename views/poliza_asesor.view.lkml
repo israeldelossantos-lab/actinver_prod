@@ -1,16 +1,16 @@
 view: poliza_asesor {
-  sql_table_name: `@{dataset_actinver}.POLIZA_ASESOR` ;;
+  sql_table_name: `@{dataset_seguros}.POLIZA_ASESOR` ;;
 
   dimension: poliza {
     primary_key: yes
     type: string
-    label: "Póliza"
+    label: "Póliza Asignada"
     sql: ${TABLE}.POLIZA ;;
   }
 
   dimension: numero_asesor {
     type: string
-    label: "Número de Asesor (Póliza)"
+    label: "Número de Asesor [VALIDAR: id_asesor_cve vs kardex]"
     sql: ${TABLE}.NUMERO_ASESOR ;;
   }
 
@@ -21,6 +21,6 @@ view: poliza_asesor {
 
   measure: count {
     type: count
-    label: "Total Asignaciones Póliza-Asesor"
+    label: "Total Asignaciones Asesor"
   }
 }

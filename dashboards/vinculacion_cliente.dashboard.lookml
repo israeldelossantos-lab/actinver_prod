@@ -232,7 +232,7 @@
       explore: clientes
       type: looker_grid
       fields: [
-        clientes.id_cliente_num,
+        clientes.cliente_ref,
         dt_escalera_vinculacion.escalon_vinculacion,
         dt_siguiente_producto_sugerido.siguiente_producto_sugerido,
         dt_siguiente_producto_sugerido.pct_grupo_que_lo_tiene,

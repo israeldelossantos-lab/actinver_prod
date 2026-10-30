@@ -1,5 +1,5 @@
 view: domiciliado {
-  sql_table_name: `@{dataset_actinver}.DOMICILIADO` ;;
+  sql_table_name: `@{dataset_seguros}.DOMICILIADO` ;;
 
   dimension: poliza {
     primary_key: yes
@@ -8,27 +8,26 @@ view: domiciliado {
     sql: ${TABLE}.POLIZA ;;
   }
 
-  dimension: es_domiciliada {
-    type: yesno
-    label: "Es Domiciliada (D)"
-    sql: ${TABLE}.DOMICILIADO = 'D' ;;
-  }
-
   dimension: baja_logica {
     type: number
     sql: ${TABLE}.BAJA_LOGICA ;;
   }
 
-  measure: count {
-    type: count
-    label: "Total Registros Domiciliación"
+  dimension: es_domiciliado {
+    type: yesno
+    label: "Pago Domiciliado"
+    sql: ${TABLE}.POLIZA IS NOT NULL ;;
   }
 
-  measure: polizas_domiciliadas_count {
-    type: count_distinct
-    label: "Pólizas Domiciliadas"
-    sql: ${poliza} ;;
-    filters: [es_domiciliada: "yes"]
+  dimension: es_domiciliada {
+    type: yesno
+    label: "Pago Domiciliado (Femenino)"
+    sql: ${TABLE}.POLIZA IS NOT NULL ;;
+  }
+
+  measure: total_domiciliadas {
+    type: count
+    label: "Total Pólizas Domiciliadas"
     value_format_name: decimal_0
   }
 }

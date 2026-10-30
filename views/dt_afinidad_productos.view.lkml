@@ -2,7 +2,7 @@ view: dt_afinidad_productos {
   derived_table: {
     sql: WITH unpivoted AS (
         SELECT CUSTOMER_ID, REPLACE(producto, 'HAS_', '') AS producto
-        FROM `@{dataset_actinver}.CLIENTE_PRODUCTO_09_10_2026`
+        FROM `@{dataset_cliente_producto}.CLIENTE_PRODUCTO_09_10_2026`
         UNPIVOT (
           has_val FOR producto IN (
             HAS_MERCADO_DE_CAPITALES, HAS_PRLV, HAS_WARRANS, HAS_NOTAS_ESTRUCTURADAS,
@@ -14,7 +14,7 @@ view: dt_afinidad_productos {
         WHERE has_val = 1
       ),
       totales AS (
-        SELECT COUNT(DISTINCT CUSTOMER_ID) AS total_clientes FROM `@{dataset_actinver}.CLIENTE_PRODUCTO_09_10_2026`
+        SELECT COUNT(DISTINCT CUSTOMER_ID) AS total_clientes FROM `@{dataset_cliente_producto}.CLIENTE_PRODUCTO_09_10_2026`
       ),
       prod_totales AS (
         SELECT producto, COUNT(DISTINCT CUSTOMER_ID) AS clientes_prod

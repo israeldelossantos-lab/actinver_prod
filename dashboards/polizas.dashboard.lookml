@@ -35,13 +35,13 @@
       allow_multiple_values: true
       required: false
       model: actinver
-      explore: primas
-      field: dt_desviacion_pago.rango_desviacion_pago
+      explore: cobranza
+      field: cobranza.rango_desviacion_pago
 
   elements:
     - name: header_tile
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Pólizas y Cobranza de Seguros</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Seguimiento a cobranza a tiempo, impacto de domiciliación, vencimientos y nuevo negocio vs renovaciones. [VALIDAR] POLIZAS cuenta con COUNT DISTINCT por riesgo contable; cancelaciones negativas sumadas a prima neta.</p></div>"
+      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Pólizas y Cobranza de Seguros</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Seguimiento a cobranza a tiempo, impacto de domiciliación, vencimientos y nuevo negocio vs renovaciones.</p></div>"
       row: 0
       col: 0
       width: 24
@@ -56,7 +56,6 @@
       listen:
         producto: producto.producto
         lob: producto.lob
-        rango_pago: dt_desviacion_pago.rango_desviacion_pago
       row: 3
       col: 0
       width: 6
@@ -71,7 +70,6 @@
       listen:
         producto: producto.producto
         lob: producto.lob
-        rango_pago: dt_desviacion_pago.rango_desviacion_pago
       row: 3
       col: 6
       width: 6
@@ -80,13 +78,12 @@
     - name: kpi_pct_a_tiempo
       title: "% Cobranza a Tiempo (Gracia/Anticipada)"
       model: actinver
-      explore: primas
+      explore: cobranza
       type: single_value
-      fields: [dt_desviacion_pago.pct_recibos_a_tiempo]
+      fields: [cobranza.pct_recibos_a_tiempo]
       listen:
         producto: producto.producto
-        lob: producto.lob
-        rango_pago: dt_desviacion_pago.rango_desviacion_pago
+        rango_pago: cobranza.rango_desviacion_pago
       row: 3
       col: 12
       width: 6
@@ -95,13 +92,12 @@
     - name: kpi_desviacion_promedio
       title: "Desviación Promedio (Días)"
       model: actinver
-      explore: primas
+      explore: cobranza
       type: single_value
-      fields: [dt_desviacion_pago.desviacion_promedio_dias]
+      fields: [cobranza.desviacion_promedio_dias]
       listen:
         producto: producto.producto
-        lob: producto.lob
-        rango_pago: dt_desviacion_pago.rango_desviacion_pago
+        rango_pago: cobranza.rango_desviacion_pago
       row: 3
       col: 18
       width: 6
@@ -113,10 +109,10 @@
       note_display: below
       note_text: "Porcentaje de recibos por rango de atraso."
       model: actinver
-      explore: primas
+      explore: cobranza
       type: looker_pie
-      fields: [dt_desviacion_pago.rango_desviacion_pago, dt_desviacion_pago.total_recibos]
-      sorts: [dt_desviacion_pago.rango_desviacion_pago asc]
+      fields: [cobranza.rango_desviacion_pago, cobranza.total_recibos]
+      sorts: [cobranza.rango_desviacion_pago asc]
       inner_radius: 50
       series_colors:
         1. Anticipado (< 0 d): "#0853BB"
@@ -125,8 +121,7 @@
         4. Crítico (> 30 d): "#F0645A"
       listen:
         producto: producto.producto
-        lob: producto.lob
-        rango_pago: dt_desviacion_pago.rango_desviacion_pago
+        rango_pago: cobranza.rango_desviacion_pago
       row: 6
       col: 0
       width: 12
@@ -138,17 +133,16 @@
       note_display: below
       note_text: "Desviación promedio en días según estatus de domiciliación."
       model: actinver
-      explore: primas
+      explore: cobranza
       type: looker_column
-      fields: [domiciliado.es_domiciliada, dt_desviacion_pago.desviacion_promedio_dias]
+      fields: [domiciliado.es_domiciliada, cobranza.desviacion_promedio_dias]
       series_colors:
-        dt_desviacion_pago.desviacion_promedio_dias: "#0F6FF5"
+        cobranza.desviacion_promedio_dias: "#0F6FF5"
       x_axis_gridlines: false
       y_axis_gridlines: true
       listen:
         producto: producto.producto
-        lob: producto.lob
-        rango_pago: dt_desviacion_pago.rango_desviacion_pago
+        rango_pago: cobranza.rango_desviacion_pago
       row: 6
       col: 12
       width: 12
@@ -160,20 +154,19 @@
       note_display: below
       note_text: "Líneas de negocio con mayor proporción de recibos críticos."
       model: actinver
-      explore: primas
+      explore: cobranza
       type: looker_bar
-      fields: [producto.lob, dt_desviacion_pago.desviacion_promedio_dias, dt_desviacion_pago.pct_recibos_criticos]
-      sorts: [dt_desviacion_pago.pct_recibos_criticos desc]
+      fields: [producto.lob, cobranza.desviacion_promedio_dias, cobranza.pct_recibos_criticos]
+      sorts: [cobranza.pct_recibos_criticos desc]
       limit: 15
       series_colors:
-        dt_desviacion_pago.desviacion_promedio_dias: "#0853BB"
-        dt_desviacion_pago.pct_recibos_criticos: "#F0645A"
+        cobranza.desviacion_promedio_dias: "#0853BB"
+        cobranza.pct_recibos_criticos: "#F0645A"
       x_axis_gridlines: false
       y_axis_gridlines: true
       listen:
         producto: producto.producto
-        lob: producto.lob
-        rango_pago: dt_desviacion_pago.rango_desviacion_pago
+        rango_pago: cobranza.rango_desviacion_pago
       row: 14
       col: 0
       width: 12
@@ -196,7 +189,6 @@
       listen:
         producto: producto.producto
         lob: producto.lob
-        rango_pago: dt_desviacion_pago.rango_desviacion_pago
       row: 14
       col: 12
       width: 12
@@ -213,7 +205,7 @@
       fields: [
         dt_vencimientos_seguros.ventana_vencimiento,
         producto.producto,
-        polizas.count_polizas,
+        dt_poliza.total_polizas,
         dt_vencimientos_seguros.prima_renovable_total
       ]
       filters:
@@ -236,19 +228,19 @@
       note_display: below
       note_text: "Lista de pólizas con más de 30 días de atraso sin domiciliación bancaria."
       model: actinver
-      explore: primas
+      explore: cobranza
       type: looker_grid
       fields: [
-        primas.poliza,
+        dt_poliza.poliza_ref,
         producto.producto,
         catasesor.asesor_etiqueta,
-        dt_desviacion_pago.dias_desviacion,
-        dt_desviacion_pago.monto_prima_pagada
+        cobranza.dias_desviacion,
+        cobranza.monto_prima_pagada
       ]
       filters:
         domiciliado.es_domiciliada: "no"
-        dt_desviacion_pago.es_critico: "yes"
-      sorts: [dt_desviacion_pago.dias_desviacion desc]
+        cobranza.es_critico: "yes"
+      sorts: [cobranza.dias_desviacion desc]
       limit: 100
       show_view_names: false
       show_row_numbers: true
@@ -257,7 +249,7 @@
       header_font_color: "#FFFFFF"
       listen:
         producto: producto.producto
-        lob: producto.lob
+        rango_pago: cobranza.rango_desviacion_pago
       row: 22
       col: 12
       width: 12
