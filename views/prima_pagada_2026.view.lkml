@@ -101,7 +101,6 @@ view: prima_pagada_2026 {
     datatype: timestamp
     label: "Fecha de Pago"
     sql: TIMESTAMP(${TABLE}.FECHA_PAGO) ;;
-  }.FECHA_PAGO ;;
   }
 
   dimension: id_moneda {
