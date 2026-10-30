@@ -7,7 +7,7 @@ view: dt_desviacion_pago {
         EXHIBICION AS exhibicion,
         ID_RIESGO_CONTABLE AS id_riesgo_contable,
         FECHA_INICIO_VIGENCIA_RECIBO AS fecha_inicio_vigencia_recibo,
-        FECHA_PAGO AS fecha_pago,
+        SAFE_CAST(FECHA_PAGO AS TIMESTAMP) AS fecha_pago,
         DATE_DIFF(DATE(FECHA_PAGO), DATE(FECHA_INICIO_VIGENCIA_RECIBO), DAY) AS dias_desviacion,
         CASE
           WHEN DATE_DIFF(DATE(FECHA_PAGO), DATE(FECHA_INICIO_VIGENCIA_RECIBO), DAY) < 0 THEN '1. Anticipado (< 0 d)'
@@ -67,7 +67,9 @@ view: dt_desviacion_pago {
   dimension_group: fecha_pago {
     type: time
     timeframes: [raw, date, week, month, year]
+    datatype: timestamp
     sql: ${TABLE}.fecha_pago ;;
+  }.fecha_pago ;;
   }
 
   dimension: dias_desviacion {
