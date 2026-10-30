@@ -50,7 +50,6 @@ view: catcentrofinanciero {
   dimension: estado_nombre {
     type: string
     label: "Estado Normalizado"
-    map_layer_name: mexico_estados
     link: {
       label: "Ver sucursales de {{ value }}"
       url: "/dashboards/actinver::desempeno_sucursales?Estado={{ value | url_encode }}"
