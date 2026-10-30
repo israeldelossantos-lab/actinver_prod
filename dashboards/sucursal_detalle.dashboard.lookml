@@ -146,7 +146,7 @@
         dt_escalera_vinculacion.total_productos_validos,
         clientes.cliente_seguro,
         clientes.segmento_awm,
-        clientes.fecha_alta_date,
+        clientes.fecha_hora_creacion_date,
         dt_siguiente_producto_sugerido.siguiente_producto_sugerido
       ]
       filters:

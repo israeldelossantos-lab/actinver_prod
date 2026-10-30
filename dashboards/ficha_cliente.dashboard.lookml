@@ -44,7 +44,7 @@
         catcentrofinanciero.centro_financiero,
         catcentrofinanciero.estado_nombre,
         catasesor.asesor_etiqueta,
-        clientes.fecha_alta_date,
+        clientes.fecha_hora_creacion_date,
         dt_escalera_vinculacion.escalon_vinculacion,
         clientes.segmento_awm,
         clientes.cliente_seguro
@@ -99,13 +99,13 @@
       model: actinver
       explore: clientes
       type: single_value
-      fields: [clientes.fecha_alta_date]
+      fields: [clientes.fecha_hora_creacion_date]
       dynamic_fields:
         - table_calculation: antiguedad_anios
           label: "Años"
-          expression: "round(diff_days(${clientes.fecha_alta_date}, now()) / 365.25, 1)"
+          expression: "round(diff_days(${clientes.fecha_hora_creacion_date}, now()) / 365.25, 1)"
           value_format_name: decimal_1
-      hidden_fields: [clientes.fecha_alta_date]
+      hidden_fields: [clientes.fecha_hora_creacion_date]
       custom_color_enabled: true
       custom_color: "#ad883a"
       show_single_value_title: true
