@@ -98,9 +98,10 @@ view: prima_pagada_2026 {
   dimension_group: fecha_pago {
     type: time
     timeframes: [raw, time, date, week, month, quarter, year]
-    datatype: datetime
+    datatype: timestamp
     label: "Fecha de Pago"
-    sql: ${TABLE}.FECHA_PAGO ;;
+    sql: TIMESTAMP(${TABLE}.FECHA_PAGO) ;;
+  }.FECHA_PAGO ;;
   }
 
   dimension: id_moneda {

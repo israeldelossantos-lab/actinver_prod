@@ -32,6 +32,14 @@
       width: 24
       height: 1
 
+    - name: header_tile
+      type: text
+      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 16px 24px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 20px; font-weight: 700; margin: 0 0 4px 0;'>Ficha del Cliente 360</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.4; opacity: 0.85;'>Expediente único del cliente: perfil KYC, tenencia comparativa por familia de productos, cuentas activas y propensión comercial.</p></div>"
+      row: 1
+      col: 0
+      width: 24
+      height: 2
+
     - name: perfil_cliente_header
       title: "Resumen del Cliente"
       model: actinver

@@ -84,6 +84,14 @@
       width: 24
       height: 1
 
+    - name: header_tile
+      type: text
+      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 16px 24px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 20px; font-weight: 700; margin: 0 0 4px 0;'>Iniciativa: Vinculación del Cliente</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.4; opacity: 0.85;'>Análisis de tenencia y diversificación de productos válidos de inversión, escalera de vinculación y afinidad de portafolios en Actinver.</p></div>"
+      row: 1
+      col: 0
+      width: 24
+      height: 2
+
     - name: clientes_con_tenencia
       title: Clientes con tenencia
       model: actinver
@@ -364,23 +372,6 @@
         - afinidad_productos.lift_promedio
       sorts: [afinidad_productos.lift_promedio desc]
       limit: 20
-      dynamic_fields:
-        - table_calculation: tiene
-          label: Tiene
-          expression: "initcap(replace(${afinidad_productos.producto_origen}, '_', ' '))"
-          _kind_hint: dimension
-        - table_calculation: le_ofrecemos
-          label: Le ofrecemos
-          expression: "initcap(replace(${afinidad_productos.producto_destino}, '_', ' '))"
-          _kind_hint: dimension
-      hidden_fields:
-        - afinidad_productos.producto_origen
-        - afinidad_productos.producto_destino
-      column_order:
-        - tiene
-        - le_ofrecemos
-        - afinidad_productos.clientes_con_ambos
-        - afinidad_productos.lift_promedio
       show_view_names: false
       show_row_numbers: true
       table_theme: white
@@ -410,6 +401,8 @@
           strikethrough: false
           fields: [afinidad_productos.lift_promedio]
       series_labels:
+        afinidad_productos.producto_origen: Tiene
+        afinidad_productos.producto_destino: Le ofrecemos
         afinidad_productos.clientes_con_ambos: Clientes con ambos
         afinidad_productos.lift_promedio: Lift
       row: 18
