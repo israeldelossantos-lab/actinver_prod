@@ -1,6 +1,6 @@
 - dashboard: geografia
   title: "Inteligencia Geográfica"
-  description: "Distribución territorial de clientes y pólizas, sucursales georreferenciadas y concentración por estado."
+  description: "Distribución territorial de clientes y pólizas, cobertura por estado y centros financieros de Actinver."
   layout: newspaper
   preferred_viewer: dashboards-next
   crossfilter_enabled: true
@@ -8,162 +8,320 @@
   filters_location_top: true
 
   filters:
-    - name: estado
-      title: "Estado"
+    - name: Estado
+      title: Estado
       type: field_filter
       default_value: ""
       allow_multiple_values: true
       required: false
+      ui_config:
+        type: checkboxes
+        display: popover
       model: actinver
       explore: clientes
       field: catcentrofinanciero.estado_nombre
 
-    - name: centro_financiero
-      title: "Centro Financiero"
+    - name: Centro financiero
+      title: Centro financiero
       type: field_filter
       default_value: ""
       allow_multiple_values: true
       required: false
+      ui_config:
+        type: checkboxes
+        display: popover
       model: actinver
       explore: clientes
       field: catcentrofinanciero.centro_financiero
+      listens_to_filters: [Estado]
+
+    - name: Escalón
+      title: Escalón
+      type: field_filter
+      default_value: ""
+      allow_multiple_values: true
+      required: false
+      ui_config:
+        type: checkboxes
+        display: popover
+      model: actinver
+      explore: clientes
+      field: dt_escalera_vinculacion.escalon_vinculacion
+
+    - name: Entidad
+      title: Entidad
+      type: field_filter
+      default_value: ""
+      allow_multiple_values: true
+      required: false
+      ui_config:
+        type: checkboxes
+        display: popover
+      model: actinver
+      explore: clientes
+      field: cuenta.tipo_entidad_bancaria
+
+    - name: Tipo de persona
+      title: Tipo de persona
+      type: field_filter
+      default_value: ""
+      allow_multiple_values: true
+      required: false
+      ui_config:
+        type: checkboxes
+        display: popover
+      model: actinver
+      explore: clientes
+      field: clientes.tipo_persona_desc
 
   elements:
-    - name: header_tile
+    - name: nav_header
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Inteligencia Geográfica (Adaptado)</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Mapeo de cobertura y clientes utilizando el centro financiero como nodo de geolocalización. Estado derivado del prefijo del centro; división territorial oficial INEGI.</p></div>"
+      title_text: ""
+      subtitle_text: ""
+      body_text: "[Vinculación](/dashboards/actinver::vinculacion_cliente) · [Seguros](/dashboards/actinver::polizas) · [Sucursales](/dashboards/actinver::desempeno_sucursales) · [Ciclo de vida](/dashboards/actinver::ciclo_vida) · [Visión 360](/dashboards/actinver::vision_360) · **Geografía** · [Calidad de datos](/dashboards/actinver::calidad_datos)"
       row: 0
       col: 0
       width: 24
-      height: 3
+      height: 1
 
-    - name: kpi_total_estados
-      title: "Entidades Federativas con Cobertura"
+    - name: kpi_estados_cobertura
+      title: "Entidades con Cobertura"
       model: actinver
       explore: clientes
       type: single_value
-      fields: [catcentrofinanciero.estado_nombre]
-      dynamic_fields:
-        - table_calculation: total_estados
-          label: "Total Estados"
-          expression: "count(${catcentrofinanciero.estado_nombre})"
-          value_format_name: decimal_0
+      fields: [catcentrofinanciero.total_estados_cobertura]
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Estados Cubiertos"
+      value_format: "#,##0"
       listen:
-        estado: catcentrofinanciero.estado_nombre
-        centro_financiero: catcentrofinanciero.centro_financiero
-      row: 3
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
       col: 0
-      width: 8
+      width: 5
       height: 3
 
-    - name: kpi_centros_mapeados
-      title: "Centros Financieros Mapeados"
+    - name: kpi_total_centros
+      title: "Centros Financieros"
       model: actinver
       explore: clientes
       type: single_value
       fields: [catcentrofinanciero.count]
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Total Centros"
+      value_format: "#,##0"
       listen:
-        estado: catcentrofinanciero.estado_nombre
-        centro_financiero: catcentrofinanciero.centro_financiero
-      row: 3
-      col: 8
-      width: 8
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
+      col: 5
+      width: 5
       height: 3
 
-    - name: kpi_clientes_territorio
-      title: "Clientes en Red Territorial"
+    - name: kpi_clientes_tenencia
+      title: "Clientes con Tenencia"
       model: actinver
       explore: clientes
       type: single_value
-      fields: [clientes.count]
+      fields: [dt_escalera_vinculacion.count]
+      filters:
+        dt_escalera_vinculacion.escalon_vinculacion: "-NULL"
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Clientes Activos"
+      value_format: "#,##0"
       listen:
-        estado: catcentrofinanciero.estado_nombre
-        centro_financiero: catcentrofinanciero.centro_financiero
-      row: 3
-      col: 16
-      width: 8
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
+      col: 10
+      width: 5
+      height: 3
+
+    - name: kpi_pct_solo_eje
+      title: "% Solo Eje"
+      model: actinver
+      explore: clientes
+      type: single_value
+      fields: [dt_escalera_vinculacion.pct_solo_eje]
+      custom_color_enabled: true
+      custom_color: "#e3a33b"
+      show_single_value_title: true
+      single_value_title: "% Oportunidad Solo Eje"
+      value_format: "0.0%"
+      listen:
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
+      col: 15
+      width: 4
+      height: 3
+
+    - name: kpi_productos_promedio
+      title: "Productos Promedio"
+      model: actinver
+      explore: clientes
+      type: single_value
+      fields: [dt_escalera_vinculacion.productos_promedio]
+      custom_color_enabled: true
+      custom_color: "#3dbe7a"
+      show_single_value_title: true
+      single_value_title: "Productos / Cliente"
+      value_format: "0.00"
+      listen:
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
+      col: 19
+      width: 5
       height: 3
 
     - name: map_clientes_estado
-      title: "¿Dónde están mis clientes y la cobertura? (Mapa Geográfico por Estado)"
-      note_state: collapsed
-      note_display: below
-      note_text: "Concentración de clientes por entidad federativa mapeada."
+      title: "¿Dónde están mis clientes y la cobertura? (Mapa de México)"
       model: actinver
       explore: clientes
       type: looker_geo_choropleth
-      fields: [catcentrofinanciero.estado_nombre, clientes.count]
-      sorts: [clientes.count desc]
+      fields: [catcentrofinanciero.estado_nombre, dt_escalera_vinculacion.count]
+      filters:
+        catcentrofinanciero.estado_nombre: "-Sin ubicación física,-Otra Entidad"
+        dt_escalera_vinculacion.escalon_vinculacion: "-NULL"
+      sorts: [dt_escalera_vinculacion.count desc]
       limit: 50
-      map: mexico_states
-      map_layer_name: mexico_states
-      map_value_colors: ["#9EC5FF", "#002D6F"]
+      map: actinver::mexico_estados
+      map_layer_name: actinver::mexico_estados
+      map_projection: ''
+      show_view_names: false
+      quantize_colors: false
+      colors: ["#E8F0FE", "#87B7FA", "#0F6FF5"]
       listen:
-        estado: catcentrofinanciero.estado_nombre
-        centro_financiero: catcentrofinanciero.centro_financiero
-      row: 6
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 4
       col: 0
-      width: 15
+      width: 14
       height: 10
 
-    - name: chart_clientes_por_estado
-      title: "Concentración de Clientes por Entidad Federativa"
-      note_state: collapsed
-      note_display: below
-      note_text: "Ranking de volumen de clientes por estado derivado."
+    - name: chart_top_centros
+      title: "Top 15 centros financieros por clientes con tenencia"
       model: actinver
       explore: clientes
       type: looker_bar
-      fields: [catcentrofinanciero.estado_nombre, clientes.count]
-      sorts: [clientes.count desc]
+      fields: [catcentrofinanciero.centro_financiero, dt_escalera_vinculacion.count]
+      filters:
+        dt_escalera_vinculacion.escalon_vinculacion: "-NULL"
+      sorts: [dt_escalera_vinculacion.count desc]
       limit: 15
-      series_colors:
-        clientes.count: "#0853BB"
+      colors: ["#0f6ff5"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "#,##0"
       x_axis_gridlines: false
       y_axis_gridlines: true
       listen:
-        estado: catcentrofinanciero.estado_nombre
-        centro_financiero: catcentrofinanciero.centro_financiero
-      row: 6
-      col: 15
-      width: 9
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 4
+      col: 14
+      width: 10
       height: 10
 
-    - name: table_crecimiento_por_zona
-      title: "¿Qué zonas crecen y concentran clientes? (Desglose por Centro)"
-      note_state: collapsed
-      note_display: below
-      note_text: "Clientes, productos promedio y pólizas vinculadas por centro financiero."
+    - name: chart_apertura_mes
+      title: "¿Cómo evoluciona la apertura de clientes en el territorio?"
+      model: actinver
+      explore: clientes
+      type: looker_area
+      fields: [cuenta.fecha_apertura_month, dt_escalera_vinculacion.count]
+      filters:
+        cuenta.fecha_apertura_month: "24 months"
+        dt_escalera_vinculacion.escalon_vinculacion: "-NULL"
+      sorts: [cuenta.fecha_apertura_month asc]
+      colors: ["#0f6ff5"]
+      show_view_names: false
+      x_axis_gridlines: false
+      y_axis_gridlines: true
+      point_style: none
+      listen:
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 14
+      col: 0
+      width: 10
+      height: 8
+
+    - name: table_desglose_estado_centro
+      title: "Desglose territorial: Estado, Centro, Clientes y Vinculación"
       model: actinver
       explore: clientes
       type: looker_grid
       fields: [
         catcentrofinanciero.estado_nombre,
         catcentrofinanciero.centro_financiero,
-        clientes.count,
-        dt_escalera_vinculacion.productos_promedio,
+        dt_escalera_vinculacion.count,
         dt_escalera_vinculacion.pct_solo_eje,
+        dt_escalera_vinculacion.productos_promedio,
         clientes.clientes_con_seguro
       ]
-      sorts: [clientes.count desc]
-      limit: 60
+      filters:
+        dt_escalera_vinculacion.escalon_vinculacion: "-NULL"
+      sorts: [dt_escalera_vinculacion.count desc]
+      limit: 100
       show_view_names: false
       show_row_numbers: true
       table_theme: white
       header_background_color: "#1A2433"
       header_font_color: "#FFFFFF"
+      color_application:
+        collection_id: custom
+        custom:
+          id: actinver-azul
+          label: Actinver azul
+          type: continuous
+          stops:
+            - color: "#e8f0fe"
+              offset: 0
+            - color: "#87b7fa"
+              offset: 50
+            - color: "#0f6ff5"
+              offset: 100
+        options:
+          steps: 5
       listen:
-        estado: catcentrofinanciero.estado_nombre
-        centro_financiero: catcentrofinanciero.centro_financiero
-      row: 16
-      col: 0
-      width: 16
-      height: 8
-
-    - name: info_fuentes_externas
-      type: text
-      body_text: "<div style='background:#F4F6F9; border:1px solid #D1D9E0; border-left:5px solid #002D6F; border-radius:8px; padding:18px; height:80%;'><h3 style='color:#002D6F; font-size:15px; margin:0 0 8px 0;'>📌 Notas de Validación Geográfica</h3><p style='color:#334155; font-size:12px; line-height:1.6; margin:0;'>• <b>ID_LOCALIDAD en Seguros:</b> Requiere tabla de correspondencia INEGI para mapeo municipal oficial.<br>• <b>Lugar de Nacimiento vs Residencia:</b> Se respeta la regla de exclusión de <code>persona.id_estado_nacimiento</code> para evitar falsas concentraciones residenciales.<br>• <b>Fuentes Externas Faltantes:</b> Población objetivo de CONAPO y distancias isócronas no disponibles sin capa geoespacial externa.</p></div>"
-      row: 16
-      col: 16
-      width: 8
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 14
+      col: 10
+      width: 14
       height: 8

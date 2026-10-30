@@ -142,3 +142,4 @@ view: dt_centro_ubicacion {
     sql_longitude: ${longitud} ;;
   }
 }
+

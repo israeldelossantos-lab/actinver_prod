@@ -1,245 +1,380 @@
 - dashboard: desempeno_sucursales
-  title: "Desempeño de Sucursales y Centros Financieros"
-  description: "Monitoreo de vinculación territorial, productividad de asesores y canal digital en Actinver."
+  title: "Desempeño de Sucursales — Portal Actinver"
+  description: "Monitoreo territorial, ranking de centros financieros, concentración de cartera y oportunidad de vinculación por asesor."
   layout: newspaper
   preferred_viewer: dashboards-next
   crossfilter_enabled: true
-  refresh: 1 hour
   filters_location_top: true
 
   filters:
-    - name: centro_financiero
-      title: "Centro Financiero"
+    - name: Estado
+      title: Estado
       type: field_filter
       default_value: ""
       allow_multiple_values: true
       required: false
-      model: actinver
-      explore: clientes
-      field: catcentrofinanciero.centro_financiero
-
-    - name: estado
-      title: "Estado"
-      type: field_filter
-      default_value: ""
-      allow_multiple_values: true
-      required: false
+      ui_config:
+        type: checkboxes
+        display: popover
       model: actinver
       explore: clientes
       field: catcentrofinanciero.estado_nombre
 
-    - name: canal_originacion
-      title: "Canal de Originación"
+    - name: Centro financiero
+      title: Centro financiero
       type: field_filter
       default_value: ""
       allow_multiple_values: true
       required: false
+      ui_config:
+        type: checkboxes
+        display: popover
       model: actinver
       explore: clientes
-      field: catcanaloriginacion.canal_originacion
+      field: catcentrofinanciero.centro_financiero
+      listens_to_filters: [Estado]
+
+    - name: Escalón
+      title: Escalón
+      type: field_filter
+      default_value: ""
+      allow_multiple_values: true
+      required: false
+      ui_config:
+        type: checkboxes
+        display: popover
+      model: actinver
+      explore: clientes
+      field: dt_escalera_vinculacion.escalon_vinculacion
+
+    - name: Entidad
+      title: Entidad
+      type: field_filter
+      default_value: ""
+      allow_multiple_values: true
+      required: false
+      ui_config:
+        type: checkboxes
+        display: popover
+      model: actinver
+      explore: clientes
+      field: cuenta.tipo_entidad_bancaria
+
+    - name: Tipo de persona
+      title: Tipo de persona
+      type: field_filter
+      default_value: ""
+      allow_multiple_values: true
+      required: false
+      ui_config:
+        type: checkboxes
+        display: popover
+      model: actinver
+      explore: clientes
+      field: clientes.tipo_persona_desc
 
   elements:
-    - name: header_tile
+    - name: nav_header
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Desempeño de Sucursales</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Evaluación de penetración y oportunidad de vinculación por centro financiero. Estado derivado del prefijo del centro financiero; mapa integrado con división estatal oficial INEGI.</p></div>"
+      title_text: ""
+      subtitle_text: ""
+      body_text: "[Vinculación](/dashboards/actinver::vinculacion_cliente) · [Seguros](/dashboards/actinver::polizas) · **Sucursales** · [Ciclo de vida](/dashboards/actinver::ciclo_vida) · [Visión 360](/dashboards/actinver::vision_360) · [Geografía](/dashboards/actinver::geografia) · [Calidad de datos](/dashboards/actinver::calidad_datos)"
       row: 0
       col: 0
       width: 24
-      height: 3
+      height: 1
 
-    - name: kpi_centros_activos
-      title: "Centros Financieros"
+    - name: kpi_total_centros
+      title: "Centros financieros"
       model: actinver
       explore: clientes
       type: single_value
       fields: [catcentrofinanciero.count]
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Total Centros"
+      value_format: "#,##0"
       listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 3
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
       col: 0
       width: 6
       height: 3
 
     - name: kpi_asesores_activos
-      title: "Asesores Activos"
+      title: "Asesores activos"
       model: actinver
       explore: clientes
       type: single_value
       fields: [catasesor.asesores_activos]
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Asesores Activos"
+      value_format: "#,##0"
       listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 3
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
       col: 6
       width: 6
       height: 3
 
     - name: kpi_clientes_por_centro
-      title: "Clientes Promedio por Centro"
+      title: "Clientes por centro"
       model: actinver
       explore: clientes
       type: single_value
-      fields: [clientes.count, catcentrofinanciero.count]
+      fields: [dt_escalera_vinculacion.count, catcentrofinanciero.count]
       dynamic_fields:
         - table_calculation: clientes_por_centro
-          label: "Promedio Clientes/Centro"
-          expression: "${clientes.count} / nullif(${catcentrofinanciero.count}, 0)"
-          value_format_name: decimal_0
+          label: "Clientes por Centro"
+          expression: "${dt_escalera_vinculacion.count} / nullif(${catcentrofinanciero.count}, 0)"
+          value_format: "#,##0"
+          _kind_hint: measure
+      hidden_fields: [dt_escalera_vinculacion.count, catcentrofinanciero.count]
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Clientes por Centro Promedio"
       listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 3
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
       col: 12
       width: 6
       height: 3
 
-    - name: kpi_solo_eje_red
-      title: "% Solo Eje Red"
+    - name: kpi_pct_solo_eje
+      title: "% Solo eje"
       model: actinver
       explore: clientes
       type: single_value
       fields: [dt_escalera_vinculacion.pct_solo_eje]
+      custom_color_enabled: true
+      custom_color: "#e3a33b"
+      show_single_value_title: true
+      single_value_title: "% Solo eje (Oportunidad)"
+      value_format: "0.0%"
       listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 3
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 1
       col: 18
       width: 6
       height: 3
 
-    - name: table_ranking_centros
+    - name: mapa_sucursales_puntos
+      title: "Mapa de sucursales: clientes y % solo eje"
+      model: actinver
+      explore: clientes
+      type: looker_google_map
+      fields:
+        - catcentrofinanciero.centro_financiero
+        - dt_centro_ubicacion.ubicacion
+        - dt_escalera_vinculacion.count
+        - dt_escalera_vinculacion.pct_solo_eje
+      filters:
+        dt_centro_ubicacion.ubicacion: "-NULL"
+      map_plot_mode: points
+      map_tile_provider: light
+      map_position: fit
+      map_scale_indicator: false
+      map_pannable: true
+      map_zoomable: true
+      map_point_color: "#0f6ff5"
+      map_marker_radius_min: 5
+      map_marker_radius_max: 20
+      listen:
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 4
+      col: 0
+      width: 14
+      height: 8
+
+    - name: ranking_centros
+      title: "Ranking de centros por clientes con tenencia"
+      model: actinver
+      explore: clientes
+      type: looker_bar
+      fields: [catcentrofinanciero.centro_financiero, dt_escalera_vinculacion.count]
+      sorts: [dt_escalera_vinculacion.count desc]
+      limit: 15
+      colors: ["#0f6ff5"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "#,##0"
+      y_axis_combined: true
+      reference_lines:
+        - reference_type: line
+          line_value: mean
+          range_end: max
+          range_start: min
+          margin_top: deviation
+          margin_value: mean
+          margin_bottom: deviation
+          label_position: right
+          color: "#f0645a"
+          label: "Promedio red"
+      listen:
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 4
+      col: 14
+      width: 10
+      height: 8
+
+    - name: tabla_oportunidad_vinculacion
       title: "¿Qué centros tienen más oportunidad de vinculación?"
-      note_state: collapsed
-      note_display: below
-      note_text: "Ranking de centros por volumen de clientes, % solo eje y productos promedio."
       model: actinver
       explore: clientes
       type: looker_grid
-      fields: [
-        catcentrofinanciero.centro_financiero,
-        catcentrofinanciero.estado_nombre,
-        clientes.count,
-        dt_escalera_vinculacion.pct_solo_eje,
-        dt_escalera_vinculacion.productos_promedio
-      ]
-      sorts: [clientes.count desc]
-      limit: 60
+      fields:
+        - catcentrofinanciero.centro_financiero
+        - catcentrofinanciero.estado_nombre
+        - dt_escalera_vinculacion.count
+        - dt_escalera_vinculacion.clientes_solo_eje
+        - dt_escalera_vinculacion.pct_solo_eje
+        - dt_escalera_vinculacion.productos_promedio
+      sorts: [dt_escalera_vinculacion.pct_solo_eje desc]
+      limit: 50
       show_view_names: false
       show_row_numbers: true
       table_theme: white
-      header_background_color: "#1A2433"
-      header_font_color: "#FFFFFF"
+      enable_conditional_formatting: true
+      conditional_formatting:
+        - type: along a scale...
+          value:
+          background_color:
+          font_color:
+          color_application:
+            collection_id: custom
+            custom:
+              id: actinver-azul
+              label: Actinver azul
+              type: continuous
+              stops:
+                - color: "#e8f0fe"
+                  offset: 0
+                - color: "#87b7fa"
+                  offset: 50
+                - color: "#0f6ff5"
+                  offset: 100
+            options:
+              steps: 5
+          bold: false
+          italic: false
+          strikethrough: false
+          fields: [dt_escalera_vinculacion.pct_solo_eje]
+      series_labels:
+        catcentrofinanciero.centro_financiero: Centro Financiero
+        catcentrofinanciero.estado_nombre: Estado
+        dt_escalera_vinculacion.count: Total Clientes
+        dt_escalera_vinculacion.clientes_solo_eje: Clientes Solo Eje
+        dt_escalera_vinculacion.pct_solo_eje: "% Solo Eje"
+        dt_escalera_vinculacion.productos_promedio: Productos Promedio
       listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 6
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 12
       col: 0
-      width: 14
-      height: 9
+      width: 24
+      height: 8
 
-    - name: chart_centros_vs_promedio
-      title: "¿Qué centros están por arriba o por debajo del promedio?"
-      note_state: collapsed
-      note_display: below
-      note_text: "Diferencia en productos promedio respecto a la media de la red."
-      model: actinver
-      explore: clientes
-      type: looker_bar
-      fields: [catcentrofinanciero.centro_financiero, dt_escalera_vinculacion.productos_promedio]
-      sorts: [dt_escalera_vinculacion.productos_promedio desc]
-      limit: 25
-      series_colors:
-        dt_escalera_vinculacion.productos_promedio: "#0853BB"
-      x_axis_gridlines: false
-      y_axis_gridlines: true
-      listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 6
-      col: 14
-      width: 10
-      height: 9
-
-    - name: chart_aperturas_canal
-      title: "¿La apertura digital crece y cambia la vinculación?"
-      note_state: collapsed
-      note_display: below
-      note_text: "Evolución mensual de apertura de cuentas por canal."
+    - name: col_apertura_evolucion_escalon
+      title: "¿La apertura de cuentas crece y cambia la vinculación?"
       model: actinver
       explore: clientes
       type: looker_column
-      fields: [cuenta.fecha_apertura_month, catcanaloriginacion.canal_originacion, cuenta.count]
-      pivots: [catcanaloriginacion.canal_originacion]
-      sorts: [cuenta.fecha_apertura_month asc]
+      fields:
+        - cuenta.fecha_apertura_month
+        - dt_escalera_vinculacion.escalon_vinculacion
+        - dt_escalera_vinculacion.count
+      pivots: [dt_escalera_vinculacion.escalon_vinculacion]
+      filters:
+        cuenta.fecha_apertura_month: 24 months ago for 24 months
+        dt_escalera_vinculacion.escalon_vinculacion: "-NULL"
       stacking: normal
-      x_axis_gridlines: false
-      y_axis_gridlines: true
+      colors: ["#8573e8", "#e3a33b", "#0f6ff5", "#12998a", "#3dbe7a"]
+      show_view_names: false
+      show_value_labels: false
+      x_axis_label: "Mes de Apertura"
+      y_axis_combined: true
       listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 15
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 20
       col: 0
       width: 14
-      height: 8
+      height: 7
 
-    - name: chart_carga_por_asesor
+    - name: bar_asesores_clientes_sin_vincular
       title: "¿Cuántos clientes sin vincular tiene cada asesor?"
-      note_state: collapsed
-      note_display: below
-      note_text: "Carga de clientes totales vs clientes solo eje por asesor activo."
       model: actinver
       explore: clientes
       type: looker_bar
-      fields: [catasesor.asesor_etiqueta, clientes.count, dt_escalera_vinculacion.clientes_solo_eje]
-      sorts: [clientes.count desc]
-      limit: 30
-      series_colors:
-        clientes.count: "#0F6FF5"
-        dt_escalera_vinculacion.clientes_solo_eje: "#F0645A"
+      fields: [catasesor.asesor_etiqueta, dt_escalera_vinculacion.clientes_solo_eje]
+      sorts: [dt_escalera_vinculacion.clientes_solo_eje desc]
+      limit: 15
+      colors: ["#e3a33b"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "#,##0"
       listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 15
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 20
       col: 14
       width: 10
-      height: 8
+      height: 7
 
-    - name: map_sucursales_estado
-      title: "¿Dónde está la oportunidad en el país? (Distribución Territorial)"
-      note_state: collapsed
-      note_display: below
-      note_text: "Concentración de clientes por entidad federativa de la red."
+    - name: bar_clientes_por_estado
+      title: "Clientes por estado"
       model: actinver
       explore: clientes
-      type: looker_geo_choropleth
-      fields: [catcentrofinanciero.estado_nombre, clientes.count]
-      sorts: [clientes.count desc]
-      limit: 50
-      map: mexico_states
-      map_layer_name: mexico_states
-      map_value_colors: ["#9EC5FF", "#002D6F"]
+      type: looker_bar
+      fields: [catcentrofinanciero.estado_nombre, dt_escalera_vinculacion.count]
+      sorts: [dt_escalera_vinculacion.count desc]
+      colors: ["#0f6ff5"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "#,##0"
       listen:
-        centro_financiero: catcentrofinanciero.centro_financiero
-        estado: catcentrofinanciero.estado_nombre
-        canal_originacion: catcanaloriginacion.canal_originacion
-      row: 23
+        Estado: catcentrofinanciero.estado_nombre
+        Centro financiero: catcentrofinanciero.centro_financiero
+        Escalón: dt_escalera_vinculacion.escalon_vinculacion
+        Entidad: cuenta.tipo_entidad_bancaria
+        Tipo de persona: clientes.tipo_persona_desc
+      row: 27
       col: 0
-      width: 18
-      height: 9
-
-    - name: alerta_info_tile
-      type: text
-      body_text: "<div style='background:#FFF9E6; border:1px solid #FFE082; border-left:5px solid #FFB300; border-radius:8px; padding:18px;'><h3 style='color:#7A5200; font-size:16px; margin:0 0 8px 0;'>🔔 Alerta de Vinculación Configurada</h3><p style='color:#8C6200; font-size:13px; margin:0 0 10px 0;'><b>Condición:</b> % Solo Eje del centro financiero > Promedio de la Red (umbral 20%).<br><b>Frecuencia:</b> Semanal (Lunes 8:00 AM).<br><b>Propósito:</b> Notificar oportunidades críticas de escalamiento de portafolio sin destinatarios reales en entorno QA.</p></div>"
-      row: 23
-      col: 18
-      width: 6
-      height: 9
+      width: 24
+      height: 7

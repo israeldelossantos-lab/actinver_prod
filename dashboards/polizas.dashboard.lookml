@@ -1,256 +1,422 @@
 - dashboard: polizas
-  title: "Pólizas y Seguros"
+  title: "Pólizas y Seguros — Portal Actinver"
   description: "Monitoreo de puntualidad de cobranza, domiciliación, vencimientos de cartera y emisión de primas."
   layout: newspaper
   preferred_viewer: dashboards-next
   crossfilter_enabled: true
-  refresh: 1 hour
   filters_location_top: true
 
   filters:
-    - name: producto
-      title: "Producto de Seguros"
-      type: field_filter
-      default_value: ""
-      allow_multiple_values: true
-      required: false
-      model: actinver
-      explore: primas
-      field: producto.producto
-
     - name: lob
-      title: "Línea de Negocio (LOB)"
+      title: "Línea de negocio"
       type: field_filter
       default_value: ""
       allow_multiple_values: true
       required: false
+      ui_config:
+        type: checkboxes
+        display: popover
       model: actinver
       explore: primas
       field: producto.lob
 
-    - name: rango_pago
-      title: "Rango de Puntualidad"
+    - name: producto
+      title: "Producto"
       type: field_filter
       default_value: ""
       allow_multiple_values: true
       required: false
+      ui_config:
+        type: checkboxes
+        display: popover
       model: actinver
-      explore: cobranza
-      field: cobranza.rango_desviacion_pago
+      explore: primas
+      field: producto.producto
 
   elements:
-    - name: header_tile
+    - name: nav_header
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Pólizas y Cobranza de Seguros</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Seguimiento a cobranza a tiempo, impacto de domiciliación, vencimientos y nuevo negocio vs renovaciones.</p></div>"
+      title_text: ""
+      subtitle_text: ""
+      body_text: "[Vinculación](/dashboards/actinver::vinculacion_cliente) · **Seguros** · [Sucursales](/dashboards/actinver::desempeno_sucursales) · [Ciclo de vida](/dashboards/actinver::ciclo_vida) · [Visión 360](/dashboards/actinver::vision_360) · [Geografía](/dashboards/actinver::geografia) · [Calidad de datos](/dashboards/actinver::calidad_datos)"
       row: 0
       col: 0
       width: 24
-      height: 3
+      height: 1
 
     - name: kpi_prima_neta
-      title: "Prima Neta Emitida (2026)"
+      title: "Prima Neta Emitida"
       model: actinver
       explore: primas
       type: single_value
-      fields: [primas.prima_neta_emitida]
+      fields: [primas.fecha_emision_poliza_month, primas.prima_neta_emitida]
+      filters:
+        primas.fecha_emision_poliza_month: 24 months ago for 24 months
+      sorts: [primas.fecha_emision_poliza_month desc]
+      limit: 500
+      dynamic_fields:
+        - table_calculation: variacion
+          label: Variación
+          expression: "${primas.prima_neta_emitida} / offset(${primas.prima_neta_emitida}, 1) - 1"
+          value_format_name: percent_1
+          _kind_hint: measure
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Prima Neta Emitida (último mes)"
+      show_comparison: true
+      comparison_type: change
+      comparison_label: "vs mes anterior"
+      hidden_fields: [primas.fecha_emision_poliza_month]
+      value_format: "$#,##0"
       listen:
-        producto: producto.producto
         lob: producto.lob
-      row: 3
+        producto: producto.producto
+      row: 1
       col: 0
-      width: 6
+      width: 5
       height: 3
 
     - name: kpi_polizas_emitidas
-      title: "Pólizas Únicas Emitidas"
+      title: "Pólizas emitidas"
       model: actinver
       explore: primas
       type: single_value
       fields: [primas.count_polizas]
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Pólizas emitidas"
+      value_format: "#,##0"
       listen:
-        producto: producto.producto
         lob: producto.lob
-      row: 3
-      col: 6
-      width: 6
+        producto: producto.producto
+      row: 1
+      col: 5
+      width: 5
       height: 3
 
-    - name: kpi_pct_a_tiempo
-      title: "% Cobranza a Tiempo (Gracia/Anticipada)"
+    - name: kpi_polizas_renovadas
+      title: "Pólizas renovadas"
+      model: actinver
+      explore: primas
+      type: single_value
+      fields: [primas.count_polizas]
+      filters:
+        primas.id_tipo_transaccion: "2"
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Pólizas renovadas"
+      value_format: "#,##0"
+      listen:
+        lob: producto.lob
+        producto: producto.producto
+      row: 1
+      col: 10
+      width: 4
+      height: 3
+
+    - name: kpi_recibos_cobrados
+      title: "Recibos cobrados"
       model: actinver
       explore: cobranza
       type: single_value
-      fields: [cobranza.pct_recibos_a_tiempo]
+      fields: [cobranza.fecha_pago_month, cobranza.total_recibos]
+      filters:
+        cobranza.fecha_pago_month: 24 months ago for 24 months
+      sorts: [cobranza.fecha_pago_month desc]
+      limit: 500
+      dynamic_fields:
+        - table_calculation: variacion
+          label: Variación
+          expression: "${cobranza.total_recibos} / offset(${cobranza.total_recibos}, 1) - 1"
+          value_format_name: percent_1
+          _kind_hint: measure
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Recibos cobrados (último mes)"
+      show_comparison: true
+      comparison_type: change
+      comparison_label: "vs mes anterior"
+      hidden_fields: [cobranza.fecha_pago_month]
+      value_format: "#,##0"
       listen:
+        lob: producto.lob
         producto: producto.producto
-        rango_pago: cobranza.rango_desviacion_pago
-      row: 3
-      col: 12
-      width: 6
+      row: 1
+      col: 14
+      width: 5
       height: 3
 
     - name: kpi_desviacion_promedio
-      title: "Desviación Promedio (Días)"
+      title: "Desviación promedio"
       model: actinver
       explore: cobranza
       type: single_value
       fields: [cobranza.desviacion_promedio_dias]
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Desviación promedio (días)"
+      value_format: "0.0"
       listen:
+        lob: producto.lob
         producto: producto.producto
-        rango_pago: cobranza.rango_desviacion_pago
-      row: 3
-      col: 18
-      width: 6
+      row: 1
+      col: 19
+      width: 5
       height: 3
 
-    - name: chart_puntualidad_pago
-      title: "¿Qué cobramos a tiempo? (Distribución de Recibos por Rango)"
-      note_state: collapsed
-      note_display: below
-      note_text: "Porcentaje de recibos por rango de atraso."
+    - name: gauge_cobranza_a_tiempo
+      title: "% Cobranza a tiempo"
+      model: actinver
+      explore: cobranza
+      type: marketplace_viz_radial_gauge::radial_gauge-marketplace
+      fields: [cobranza.pct_recibos_a_tiempo]
+      fill_color: "#0f6ff5"
+      background_color: "#d9d9d9"
+      range_min: 0
+      range_max: 1
+      value_formatting: "0.0%"
+      range_formatting: "0%"
+      listen:
+        lob: producto.lob
+        producto: producto.producto
+      row: 4
+      col: 0
+      width: 6
+      height: 6
+
+    - name: gauge_renovacion
+      title: "% Renovación"
+      model: actinver
+      explore: primas
+      type: marketplace_viz_radial_gauge::radial_gauge-marketplace
+      fields: [primas.id_tipo_transaccion, primas.count_polizas]
+      filters:
+        primas.id_tipo_transaccion: "1,2"
+      dynamic_fields:
+        - table_calculation: pct_renovacion
+          label: "% Renovación"
+          expression: "sum(if(${primas.id_tipo_transaccion} = 2, ${primas.count_polizas}, 0)) / sum(${primas.count_polizas})"
+          value_format_name: percent_1
+          _kind_hint: measure
+      hidden_fields: [primas.id_tipo_transaccion, primas.count_polizas]
+      fill_color: "#0f6ff5"
+      background_color: "#d9d9d9"
+      range_min: 0
+      range_max: 1
+      value_formatting: "0.0%"
+      range_formatting: "0%"
+      listen:
+        lob: producto.lob
+        producto: producto.producto
+      row: 4
+      col: 6
+      width: 6
+      height: 6
+
+    - name: treemap_primas_lob_producto
+      title: "Distribución de prima por línea de negocio y producto"
+      model: actinver
+      explore: primas
+      type: looker_column
+      fields: [producto.lob, producto.producto, primas.prima_neta_emitida]
+      pivots: [producto.lob]
+      filters:
+        primas.prima_neta_emitida: ">0"
+      advanced_vis_config: "{ chart: { type: 'treemap' } }"
+      listen:
+        lob: producto.lob
+        producto: producto.producto
+      row: 4
+      col: 12
+      width: 12
+      height: 6
+
+    - name: dona_cobranza_tiempo
+      title: "¿Qué cobramos a tiempo?"
       model: actinver
       explore: cobranza
       type: looker_pie
       fields: [cobranza.rango_desviacion_pago, cobranza.total_recibos]
-      sorts: [cobranza.rango_desviacion_pago asc]
       inner_radius: 50
-      series_colors:
-        1. Anticipado (< 0 d): "#0853BB"
-        2. Gracia (0-15 d): "#3DBE7A"
-        3. Atrasado (16-30 d): "#E3A33B"
-        4. Crítico (> 30 d): "#F0645A"
+      colors: ["#3dbe7a", "#12998a", "#e3a33b", "#f0645a"]
+      show_view_names: false
       listen:
+        lob: producto.lob
         producto: producto.producto
-        rango_pago: cobranza.rango_desviacion_pago
-      row: 6
+      row: 10
       col: 0
-      width: 12
-      height: 8
+      width: 8
+      height: 7
 
-    - name: chart_domiciliacion_desviacion
+    - name: col_domiciliadas_desviacion
       title: "¿Las pólizas domiciliadas pagan con menos atraso?"
-      note_state: collapsed
-      note_display: below
-      note_text: "Desviación promedio en días según estatus de domiciliación."
       model: actinver
       explore: cobranza
       type: looker_column
       fields: [domiciliado.es_domiciliada, cobranza.desviacion_promedio_dias]
-      series_colors:
-        cobranza.desviacion_promedio_dias: "#0F6FF5"
-      x_axis_gridlines: false
+      colors: ["#0f6ff5"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "0.0"
       y_axis_gridlines: true
       listen:
+        lob: producto.lob
         producto: producto.producto
-        rango_pago: cobranza.rango_desviacion_pago
-      row: 6
-      col: 12
-      width: 12
-      height: 8
+      row: 10
+      col: 8
+      width: 8
+      height: 7
 
-    - name: chart_atraso_por_producto
-      title: "¿Dónde se concentra el atraso? (Desviación y Morosidad por Producto)"
-      note_state: collapsed
-      note_display: below
-      note_text: "Líneas de negocio con mayor proporción de recibos críticos."
+    - name: bar_atraso_por_lob
+      title: "¿Dónde se concentra el atraso?"
       model: actinver
       explore: cobranza
       type: looker_bar
-      fields: [producto.lob, cobranza.desviacion_promedio_dias, cobranza.pct_recibos_criticos]
+      fields: [producto.lob, cobranza.pct_recibos_criticos]
       sorts: [cobranza.pct_recibos_criticos desc]
-      limit: 15
-      series_colors:
-        cobranza.desviacion_promedio_dias: "#0853BB"
-        cobranza.pct_recibos_criticos: "#F0645A"
-      x_axis_gridlines: false
-      y_axis_gridlines: true
+      colors: ["#f0645a"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "0.0%"
       listen:
+        lob: producto.lob
         producto: producto.producto
-        rango_pago: cobranza.rango_desviacion_pago
-      row: 14
-      col: 0
-      width: 12
-      height: 8
+      row: 10
+      col: 16
+      width: 8
+      height: 7
 
-    - name: chart_emision_mensual_lob
-      title: "¿Cuánto emitimos en 2026? (Prima Emitida Mensual por LOB)"
-      note_state: collapsed
-      note_display: below
-      note_text: "Evolución mensual de prima neta emitida por línea de negocio."
+    - name: area_prima_mensual_lob
+      title: "Prima emitida mensual por línea de negocio"
       model: actinver
       explore: primas
       type: looker_column
       fields: [primas.fecha_emision_poliza_month, producto.lob, primas.prima_neta_emitida]
       pivots: [producto.lob]
-      sorts: [primas.fecha_emision_poliza_month asc]
+      filters:
+        primas.fecha_emision_poliza_month: 24 months ago for 24 months
       stacking: normal
-      x_axis_gridlines: false
-      y_axis_gridlines: true
+      colors: ["#0f6ff5", "#12998a", "#ad883a", "#8573e8", "#d9704c"]
+      show_view_names: false
       listen:
-        producto: producto.producto
         lob: producto.lob
-      row: 14
-      col: 12
-      width: 12
-      height: 8
+        producto: producto.producto
+      row: 17
+      col: 0
+      width: 16
+      height: 7
 
-    - name: table_vencimientos_cartera
-      title: "¿Qué pólizas vencen pronto y cuánta prima podríamos perder?"
-      note_state: collapsed
-      note_display: below
-      note_text: "Pólizas con vencimiento a 30, 60 y 90 días con prima en riesgo."
+    - name: col_nuevo_vs_renovacion
+      title: "¿Nuevo negocio o renovación?"
+      model: actinver
+      explore: primas
+      type: looker_column
+      fields: [primas.tipo_transaccion, primas.count_polizas]
+      filters:
+        primas.id_tipo_transaccion: "1,2"
+      colors: ["#0f6ff5", "#12998a"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "#,##0"
+      listen:
+        lob: producto.lob
+        producto: producto.producto
+      row: 17
+      col: 16
+      width: 8
+      height: 7
+
+    - name: tabla_vencimientos_90_dias
+      title: "¿Qué pólizas vencen en los próximos 90 días?"
       model: actinver
       explore: polizas
       type: looker_grid
-      fields: [
-        dt_vencimientos_seguros.ventana_vencimiento,
-        producto.producto,
-        dt_poliza.total_polizas,
-        dt_vencimientos_seguros.prima_renovable_total
-      ]
+      fields:
+        - polizas.poliza
+        - producto.producto
+        - producto.lob
+        - catasesor.asesor_etiqueta
+        - polizas.fecha_fin_vigencia_date
       filters:
-        dt_vencimientos_seguros.es_por_vencer_90d: "yes"
-      sorts: [dt_vencimientos_seguros.prima_renovable_total desc]
-      limit: 50
+        polizas.fecha_fin_vigencia_date: today for 90 days
+      sorts: [polizas.fecha_fin_vigencia_date asc]
+      limit: 100
       show_view_names: false
       show_row_numbers: true
       table_theme: white
-      header_background_color: "#1A2433"
-      header_font_color: "#FFFFFF"
-      row: 22
+      series_labels:
+        polizas.poliza: Póliza
+        producto.producto: Producto
+        producto.lob: Línea de negocio
+        catasesor.asesor_etiqueta: Asesor
+        polizas.fecha_fin_vigencia_date: Fin Vigencia
+      listen:
+        lob: producto.lob
+        producto: producto.producto
+      row: 24
       col: 0
       width: 12
       height: 8
 
-    - name: table_no_domiciliadas_atraso
-      title: "¿A quién le ofrecemos domiciliar? (No Domiciliadas con Atraso Crítico)"
-      note_state: collapsed
-      note_display: below
-      note_text: "Lista de pólizas con más de 30 días de atraso sin domiciliación bancaria."
+    - name: tabla_ofrecer_domiciliar
+      title: "¿A quién le ofrecemos domiciliar?"
       model: actinver
       explore: cobranza
       type: looker_grid
-      fields: [
-        dt_poliza.poliza_ref,
-        producto.producto,
-        catasesor.asesor_etiqueta,
-        cobranza.dias_desviacion,
-        cobranza.monto_prima_pagada
-      ]
+      fields:
+        - cobranza.poliza
+        - producto.producto
+        - catasesor.asesor_etiqueta
+        - cobranza.dias_desviacion
+        - cobranza.monto_prima_pagada
       filters:
-        domiciliado.es_domiciliada: "no"
-        cobranza.es_critico: "yes"
+        domiciliado.es_domiciliada: "No"
+        cobranza.es_critico: "Yes"
       sorts: [cobranza.dias_desviacion desc]
       limit: 100
       show_view_names: false
       show_row_numbers: true
       table_theme: white
-      header_background_color: "#1A2433"
-      header_font_color: "#FFFFFF"
+      enable_conditional_formatting: true
+      conditional_formatting:
+        - type: along a scale...
+          value:
+          background_color:
+          font_color:
+          color_application:
+            collection_id: custom
+            custom:
+              id: actinver-azul
+              label: Actinver azul
+              type: continuous
+              stops:
+                - color: "#e8f0fe"
+                  offset: 0
+                - color: "#87b7fa"
+                  offset: 50
+                - color: "#0f6ff5"
+                  offset: 100
+            options:
+              steps: 5
+          bold: false
+          italic: false
+          strikethrough: false
+          fields: [cobranza.dias_desviacion]
+      series_labels:
+        cobranza.poliza: Póliza
+        producto.producto: Producto
+        catasesor.asesor_etiqueta: Asesor
+        cobranza.dias_desviacion: Días de Desviación
+        cobranza.monto_prima_pagada: Prima Pagada
       listen:
+        lob: producto.lob
         producto: producto.producto
-        rango_pago: cobranza.rango_desviacion_pago
-      row: 22
+      row: 24
       col: 12
       width: 12
       height: 8

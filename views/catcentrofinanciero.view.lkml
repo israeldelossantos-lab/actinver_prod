@@ -114,4 +114,11 @@ view: catcentrofinanciero {
     label: "Total Centros Financieros"
     value_format_name: decimal_0
   }
+
+  measure: total_estados_cobertura {
+    type: count_distinct
+    sql: CASE WHEN ${estado_nombre} NOT IN ('Sin ubicación física', 'Otra Entidad') THEN ${estado_nombre} ELSE NULL END ;;
+    label: "Entidades Federativas con Cobertura"
+    value_format_name: decimal_0
+  }
 }

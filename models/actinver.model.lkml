@@ -4,7 +4,7 @@ include: "/views/**/*.view.lkml"
 include: "/dashboards/**/*.dashboard.lookml"
 
 # ----------------------------------------------------
-# CONFIGURACIÓN GLOBAL: DATAGROUP Y CONTROL DE ACCESO (CLS)
+# CONFIGURACIÃ“N GLOBAL: DATAGROUP Y CONTROL DE ACCESO (CLS)
 # ----------------------------------------------------
 datagroup: actinver_diario {
   max_cache_age: "24 hours"
@@ -18,20 +18,21 @@ access_grant: ver_pii {
 }
 
 # ----------------------------------------------------
-# CAPA DE MAPA: ESTADOS DE MÉXICO (TOPOJSON)
+# CAPA DE MAPA: ESTADOS DE MÃ‰XICO (TOPOJSON)
 # ----------------------------------------------------
 map_layer: mexico_estados {
   file: "/maps/mexico_estados.topojson"
+  format: topojson
   property_key: "state_name"
 }
 
 # ----------------------------------------------------
-# 1. EXPLORE: CLIENTES E INVERSIONES (VISIÓN 360)
+# 1. EXPLORE: CLIENTES E INVERSIONES (VISIÃ“N 360)
 # ----------------------------------------------------
 explore: clientes {
   from: cliente
   label: "1. Clientes e Inversiones (360)"
-  description: "Visión integral de clientes, vinculación de productos, cuentas, asesores, centros financieros y seguros cruzados"
+  description: "VisiÃ³n integral de clientes, vinculaciÃ³n de productos, cuentas, asesores, centros financieros y seguros cruzados"
 
   join: persona {
     type: left_outer
@@ -105,11 +106,11 @@ explore: clientes {
 }
 
 # ----------------------------------------------------
-# 2. EXPLORE: PÓLIZAS Y SEGUROS
+# 2. EXPLORE: PÃ“LIZAS Y SEGUROS
 # ----------------------------------------------------
 explore: polizas {
-  label: "2. Pólizas y Seguros"
-  description: "Cartera de seguros, puntualidad de cobranza, vencimientos y domiciliación"
+  label: "2. PÃ³lizas y Seguros"
+  description: "Cartera de seguros, puntualidad de cobranza, vencimientos y domiciliaciÃ³n"
   sql_always_where: ${polizas.baja_logica} = 0 ;;
 
   join: dt_poliza {
@@ -185,7 +186,7 @@ explore: polizas {
 explore: primas {
   from: prima_emitida_2026
   label: "3. Primas Emitidas (Seguros)"
-  description: "Emisión de primas y facturación técnica de seguros"
+  description: "EmisiÃ³n de primas y facturaciÃ³n tÃ©cnica de seguros"
   sql_always_where: ${primas.baja_logica} = 0 ;;
 
   join: dt_poliza {
@@ -232,12 +233,12 @@ explore: primas {
 }
 
 # ----------------------------------------------------
-# 4. EXPLORE: COBRANZA Y DESVIACIÓN DE PAGO
+# 4. EXPLORE: COBRANZA Y DESVIACIÃ“N DE PAGO
 # ----------------------------------------------------
 explore: cobranza {
   from: dt_desviacion_pago
-  label: "4. Cobranza y Desviación de Pago (Seguros)"
-  description: "Análisis de puntualidad, días de desviación y morosidad por recibo de pago"
+  label: "4. Cobranza y DesviaciÃ³n de Pago (Seguros)"
+  description: "AnÃ¡lisis de puntualidad, dÃ­as de desviaciÃ³n y morosidad por recibo de pago"
 
   join: dt_poliza {
     type: left_outer
@@ -288,7 +289,7 @@ explore: cobranza {
 explore: afinidad_productos {
   from: dt_afinidad_productos
   label: "5. Afinidad de Productos (Cross-Sell)"
-  description: "Matriz de co-ocurrencia, confianza y lift entre productos de inversión"
+  description: "Matriz de co-ocurrencia, confianza y lift entre productos de inversiÃ³n"
 }
 
 # ----------------------------------------------------
@@ -298,3 +299,4 @@ explore: calidad_datos {
   label: "6. Calidad de Datos (Transversal)"
   description: "Matriz de reglas de integridad, consistencia y observabilidad de datos en Actinver"
 }
+

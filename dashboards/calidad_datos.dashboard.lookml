@@ -1,6 +1,6 @@
 - dashboard: calidad_datos
   title: "Transversal: Calidad de Datos y Gobierno"
-  description: "Monitoreo de integridad de datos, reglas de consistencia técnica, gobierno PII y estado de analítica conversacional."
+  description: "Monitoreo de integridad de datos, reglas de consistencia técnica, completitud y gobierno de datos en Actinver."
   layout: newspaper
   preferred_viewer: dashboards-next
   crossfilter_enabled: true
@@ -8,34 +8,42 @@
   filters_location_top: true
 
   filters:
-    - name: severidad
-      title: "Severidad de Regla"
+    - name: Severidad
+      title: Severidad
       type: field_filter
       default_value: ""
       allow_multiple_values: true
       required: false
+      ui_config:
+        type: checkboxes
+        display: popover
       model: actinver
       explore: calidad_datos
       field: calidad_datos.severidad
 
-    - name: tabla
-      title: "Tabla de Origen"
+    - name: Tabla
+      title: Tabla
       type: field_filter
       default_value: ""
       allow_multiple_values: true
       required: false
+      ui_config:
+        type: checkboxes
+        display: popover
       model: actinver
       explore: calidad_datos
       field: calidad_datos.tabla
 
   elements:
-    - name: header_tile
+    - name: nav_header
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 22px; font-weight: 700; margin: 0 0 6px 0;'>Iniciativa: Transversal (Calidad de Datos, Seguridad y Observabilidad)</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.5; opacity: 0.85;'>Matriz de reglas de integridad sintética y productiva, control de acceso a datos confidenciales (PII) y habilitación de gobierno de datos en Actinver.</p></div>"
+      title_text: ""
+      subtitle_text: ""
+      body_text: "[Vinculación](/dashboards/actinver::vinculacion_cliente) · [Seguros](/dashboards/actinver::polizas) · [Sucursales](/dashboards/actinver::desempeno_sucursales) · [Ciclo de vida](/dashboards/actinver::ciclo_vida) · [Visión 360](/dashboards/actinver::vision_360) · [Geografía](/dashboards/actinver::geografia) · **Calidad de datos**"
       row: 0
       col: 0
       width: 24
-      height: 3
+      height: 1
 
     - name: kpi_reglas_evaluadas
       title: "Reglas Evaluadas"
@@ -43,12 +51,17 @@
       explore: calidad_datos
       type: single_value
       fields: [calidad_datos.total_reglas]
+      custom_color_enabled: true
+      custom_color: "#0f6ff5"
+      show_single_value_title: true
+      single_value_title: "Total Reglas"
+      value_format: "#,##0"
       listen:
-        severidad: calidad_datos.severidad
-        tabla: calidad_datos.tabla
-      row: 3
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 1
       col: 0
-      width: 6
+      width: 5
       height: 3
 
     - name: kpi_reglas_con_falla
@@ -57,12 +70,17 @@
       explore: calidad_datos
       type: single_value
       fields: [calidad_datos.reglas_con_falla]
+      custom_color_enabled: true
+      custom_color: "#f0645a"
+      show_single_value_title: true
+      single_value_title: "Con Observación"
+      value_format: "#,##0"
       listen:
-        severidad: calidad_datos.severidad
-        tabla: calidad_datos.tabla
-      row: 3
-      col: 6
-      width: 6
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 1
+      col: 5
+      width: 5
       height: 3
 
     - name: kpi_reglas_conformes
@@ -71,12 +89,17 @@
       explore: calidad_datos
       type: single_value
       fields: [calidad_datos.reglas_sin_falla]
+      custom_color_enabled: true
+      custom_color: "#3dbe7a"
+      show_single_value_title: true
+      single_value_title: "100% Conformes"
+      value_format: "#,##0"
       listen:
-        severidad: calidad_datos.severidad
-        tabla: calidad_datos.tabla
-      row: 3
-      col: 12
-      width: 6
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 1
+      col: 10
+      width: 4
       height: 3
 
     - name: kpi_pct_promedio_falla
@@ -85,19 +108,40 @@
       explore: calidad_datos
       type: single_value
       fields: [calidad_datos.pct_promedio_falla]
+      custom_color_enabled: true
+      custom_color: "#e3a33b"
+      show_single_value_title: true
+      single_value_title: "% Falla Promedio"
+      value_format: "0.00%"
       listen:
-        severidad: calidad_datos.severidad
-        tabla: calidad_datos.tabla
-      row: 3
-      col: 18
-      width: 6
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 1
+      col: 14
+      width: 5
+      height: 3
+
+    - name: kpi_total_registros_falla
+      title: "Total Registros con Falla"
+      model: actinver
+      explore: calidad_datos
+      type: single_value
+      fields: [calidad_datos.total_registros_con_falla]
+      custom_color_enabled: true
+      custom_color: "#8573e8"
+      show_single_value_title: true
+      single_value_title: "Registros Observados"
+      value_format: "#,##0"
+      listen:
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 1
+      col: 19
+      width: 5
       height: 3
 
     - name: table_matriz_calidad
       title: "Matriz de Reglas de Calidad e Integridad de Datos (R1 a R9)"
-      note_state: collapsed
-      note_display: below
-      note_text: "Se exponen, no se corrigen. Reglas técnicas de integridad referencial, duplicidad y consistencia temporal."
       model: actinver
       explore: calidad_datos
       type: looker_grid
@@ -117,48 +161,85 @@
       table_theme: white
       header_background_color: "#1A2433"
       header_font_color: "#FFFFFF"
+      color_application:
+        collection_id: custom
+        custom:
+          id: actinver-azul
+          label: Actinver azul
+          type: continuous
+          stops:
+            - color: "#e8f0fe"
+              offset: 0
+            - color: "#87b7fa"
+              offset: 50
+            - color: "#0f6ff5"
+              offset: 100
+        options:
+          steps: 5
       listen:
-        severidad: calidad_datos.severidad
-        tabla: calidad_datos.tabla
-      row: 6
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 4
       col: 0
       width: 24
       height: 9
 
     - name: chart_fallas_por_regla
-      title: "Registros con Falla / Observación por Regla"
-      note_state: collapsed
-      note_display: below
-      note_text: "Volumen de registros que incumplen el criterio de integridad definido."
+      title: "¿Qué reglas acumulan mayor volumen de registros con observación?"
       model: actinver
       explore: calidad_datos
       type: looker_column
       fields: [calidad_datos.regla, calidad_datos.total_registros_con_falla]
       sorts: [calidad_datos.total_registros_con_falla desc]
-      series_colors:
-        calidad_datos.total_registros_con_falla: "#E53935"
+      colors: ["#f0645a"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "#,##0"
       x_axis_gridlines: false
       y_axis_gridlines: true
       listen:
-        severidad: calidad_datos.severidad
-        tabla: calidad_datos.tabla
-      row: 15
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 13
       col: 0
-      width: 12
+      width: 8
       height: 8
 
-    - name: tile_seguridad_pii
-      type: text
-      body_text: "<div style='background: #F4F6F9; border: 1px solid #D1D9E0; border-left: 5px solid #002D6F; border-radius: 8px; padding: 18px; height: 85%;'><h3 style='color: #002D6F; font-size: 16px; margin: 0 0 10px 0;'>🔒 Seguridad y Control de Acceso (CLS / PII)</h3><p style='color: #334155; font-size: 13px; line-height: 1.6; margin: 0;'><b>Política de Anonimización:</b> Se implementó control de acceso a nivel columna (CLS) mediante <code>access_grant: ver_pii</code> con el atributo de usuario <code>ver_pii = 'si'</code>.<br><br><b>Campos Protegidos:</b><br>• <code>cliente_producto.customer_id</code><br>• <code>cuenta.cuenta_flex</code><br>• <code>cliente.id_persona, id_asesor, rfc_curp</code><br>• <code>polizas.poliza_ref</code> (máscara pública <code>***1234</code>)<br><br><b>Estado Actual:</b> User attribute <code>ver_pii</code> pendiente de configuración formal en Looker Admin Console para usuarios no administradores.</p></div>"
-      row: 15
-      col: 12
-      width: 6
+    - name: chart_reglas_por_severidad
+      title: "Distribución de reglas por nivel de severidad"
+      model: actinver
+      explore: calidad_datos
+      type: looker_pie
+      fields: [calidad_datos.severidad, calidad_datos.total_reglas]
+      sorts: [calidad_datos.total_reglas desc]
+      colors: ["#f0645a", "#e3a33b", "#3dbe7a", "#0f6ff5"]
+      show_view_names: false
+      inner_radius: 50
+      listen:
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 13
+      col: 8
+      width: 8
       height: 8
 
-    - name: tile_conversational_analytics
-      type: text
-      body_text: "<div style='background: #FFFBEB; border: 1px solid #FCD34D; border-left: 5px solid #D97706; border-radius: 8px; padding: 18px; height: 85%;'><h3 style='color: #92400E; font-size: 16px; margin: 0 0 10px 0;'>💬 Conversational Analytics (GenAI)</h3><p style='color: #78350F; font-size: 13px; line-height: 1.6; margin: 0;'><b>Alcance y Estatus:</b> Iniciativa fuera del alcance del modelado relacional LookML tradicional (requiere integración con Looker GenAI Data Agent / BigQuery Data Agent).<br><br><b>Metas de Aprobación:</b><br>• Suite de <i>Golden Queries</i> por perfil comercial (Directivo, Asesor Patrimonial, Analista de Riesgo).<br>• Meta de precisión y grounding semántico: <b>≥ 80 % de éxito</b> sin alucinación.<br><br><b>Acción:</b> Pendiente de habilitación en capa de agentes conversacionales.</p></div>"
-      row: 15
-      col: 18
-      width: 6
+    - name: chart_falla_por_tabla
+      title: "% de falla promedio por tabla fuente"
+      model: actinver
+      explore: calidad_datos
+      type: looker_bar
+      fields: [calidad_datos.tabla, calidad_datos.pct_promedio_falla]
+      sorts: [calidad_datos.pct_promedio_falla desc]
+      colors: ["#0f6ff5"]
+      show_view_names: false
+      show_value_labels: true
+      label_value_format: "0.00%"
+      x_axis_gridlines: false
+      y_axis_gridlines: true
+      listen:
+        Severidad: calidad_datos.severidad
+        Tabla: calidad_datos.tabla
+      row: 13
+      col: 16
+      width: 8
       height: 8
