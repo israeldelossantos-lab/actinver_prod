@@ -69,7 +69,6 @@ view: dt_desviacion_pago {
     timeframes: [raw, date, week, month, year]
     datatype: timestamp
     sql: ${TABLE}.fecha_pago ;;
-  }.fecha_pago ;;
   }
 
   dimension: dias_desviacion {
