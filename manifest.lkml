@@ -16,6 +16,12 @@ constant: dataset_spine {
   export: none
 }
 
+# Fuentes públicas externas: Banxico, INEGI, DataMéxico y Banco Mundial (ingesta en ingesta_contexto/)
+constant: dataset_contexto {
+  value: "vertex-ia-503623.contexto_externo"
+  export: none
+}
+
 # Retrocompatibilidad general
 constant: dataset_actinver {
   value: "vertex-ia-503623.spine"

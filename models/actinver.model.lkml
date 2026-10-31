@@ -4,7 +4,7 @@ include: "/views/**/*.view.lkml"
 include: "/dashboards/**/*.dashboard.lookml"
 
 # ----------------------------------------------------
-# CONFIGURACIÃ“N GLOBAL: DATAGROUP Y CONTROL DE ACCESO (CLS)
+# CONFIGURACIÓN GLOBAL: DATAGROUP Y CONTROL DE ACCESO (CLS)
 # ----------------------------------------------------
 datagroup: actinver_diario {
   max_cache_age: "24 hours"
@@ -18,7 +18,7 @@ access_grant: ver_pii {
 }
 
 # ----------------------------------------------------
-# CAPA DE MAPA: ESTADOS DE MÃ‰XICO (TOPOJSON)
+# CAPA DE MAPA: ESTADOS DE MÉXICO (TOPOJSON)
 # ----------------------------------------------------
 # map_layer: mexico_estados {
 #   file: "/maps/mexico_estados.topojson"
@@ -27,12 +27,12 @@ access_grant: ver_pii {
 # }
 
 # ----------------------------------------------------
-# 1. EXPLORE: CLIENTES E INVERSIONES (VISIÃ“N 360)
+# 1. EXPLORE: CLIENTES E INVERSIONES (VISIÓN 360)
 # ----------------------------------------------------
 explore: clientes {
   from: cliente
   label: "1. Clientes e Inversiones (360)"
-  description: "VisiÃ³n integral de clientes, vinculaciÃ³n de productos, cuentas, asesores, centros financieros y seguros cruzados"
+  description: "Visión integral de clientes, vinculación de productos, cuentas, asesores, centros financieros y seguros cruzados"
 
   join: persona {
     type: left_outer
@@ -106,11 +106,11 @@ explore: clientes {
 }
 
 # ----------------------------------------------------
-# 2. EXPLORE: PÃ“LIZAS Y SEGUROS
+# 2. EXPLORE: PÓLIZAS Y SEGUROS
 # ----------------------------------------------------
 explore: polizas {
-  label: "2. PÃ³lizas y Seguros"
-  description: "Cartera de seguros, puntualidad de cobranza, vencimientos y domiciliaciÃ³n"
+  label: "2. Pólizas y Seguros"
+  description: "Cartera de seguros, puntualidad de cobranza, vencimientos y domiciliación"
   sql_always_where: ${polizas.baja_logica} = 0 ;;
 
   join: dt_poliza {
@@ -186,7 +186,7 @@ explore: polizas {
 explore: primas {
   from: prima_emitida_2026
   label: "3. Primas Emitidas (Seguros)"
-  description: "EmisiÃ³n de primas y facturaciÃ³n tÃ©cnica de seguros"
+  description: "Emisión de primas y facturación técnica de seguros"
   sql_always_where: ${primas.baja_logica} = 0 ;;
 
   join: dt_poliza {
@@ -233,12 +233,12 @@ explore: primas {
 }
 
 # ----------------------------------------------------
-# 4. EXPLORE: COBRANZA Y DESVIACIÃ“N DE PAGO
+# 4. EXPLORE: COBRANZA Y DESVIACIÓN DE PAGO
 # ----------------------------------------------------
 explore: cobranza {
   from: dt_desviacion_pago
-  label: "4. Cobranza y DesviaciÃ³n de Pago (Seguros)"
-  description: "AnÃ¡lisis de puntualidad, dÃ­as de desviaciÃ³n y morosidad por recibo de pago"
+  label: "4. Cobranza y Desviación de Pago (Seguros)"
+  description: "Análisis de puntualidad, días de desviación y morosidad por recibo de pago"
 
   join: dt_poliza {
     type: left_outer
@@ -289,7 +289,7 @@ explore: cobranza {
 explore: afinidad_productos {
   from: dt_afinidad_productos
   label: "5. Afinidad de Productos (Cross-Sell)"
-  description: "Matriz de co-ocurrencia, confianza y lift entre productos de inversiÃ³n"
+  description: "Matriz de co-ocurrencia, confianza y lift entre productos de inversión"
 }
 
 # ----------------------------------------------------
@@ -300,3 +300,40 @@ explore: calidad_datos {
   description: "Matriz de reglas de integridad, consistencia y observabilidad de datos en Actinver"
 }
 
+# ----------------------------------------------------
+# CONTEXTO EXTERNO: fuentes públicas en vertex-ia-503623.contexto_externo
+# (Banxico, INEGI, DataMéxico, Banco Mundial). Se actualizan con la ingesta de ingesta_contexto/.
+# ----------------------------------------------------
+
+# 7. MERCADO: tasas, CETES, tipo de cambio e inflación de Banxico
+explore: mercado_mexico {
+  from: ctx_banxico_mensual
+  label: "7. Mercado (Banxico)"
+  description: "Tasa objetivo, TIIE 28, CETES 28 y 91, dólar FIX, inflación anual e INPC de Banco de México. Historia mensual desde 2015 y el valor más reciente con su cambio a 1 y 12 meses. Para el valor actual usa los campos de 'Mercado: valor actual'"
+
+  join: ctx_mercado_ultimo {
+    type: left_outer
+    sql_on: ${mercado_mexico.serie_id} = ${ctx_mercado_ultimo.serie_id} ;;
+    relationship: many_to_one
+  }
+}
+
+# 8. MÉXICO FRENTE AL MUNDO: Banco Mundial (WDI y Global Findex)
+explore: mexico_mundo {
+  from: ctx_indicadores_mundo
+  label: "8. México frente al mundo (Banco Mundial)"
+  description: "Crecimiento del PIB, inflación, PIB per cápita, población y adultos con cuenta financiera (Findex) de México comparado con Brasil, Chile, Colombia, Perú, América Latina y el Mundo. Datos anuales"
+}
+
+# 9. CONTEXTO POR ESTADO: economía de cada estado frente a los clientes y sucursales de Actinver
+explore: contexto_estatal {
+  from: ctx_estado
+  label: "9. Contexto por estado (INEGI y DataMéxico)"
+  description: "Una fila por estado: PIB, población, ingreso de los hogares, salario, inversión extranjera y desocupación, junto con los clientes y sucursales de Actinver y su penetración (clientes por 100 mil habitantes). Sirve para encontrar estados con potencial y sin sucursal"
+
+  join: ctx_clientes_estado {
+    type: left_outer
+    sql_on: ${contexto_estatal.clave_estado_inegi} = ${ctx_clientes_estado.clave_estado_inegi} ;;
+    relationship: one_to_one
+  }
+}
