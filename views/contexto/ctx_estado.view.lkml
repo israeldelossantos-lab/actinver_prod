@@ -1,8 +1,6 @@
 # Una fila por entidad federativa con el último dato de cada indicador público.
-# Fuentes: INEGI (PIB estatal, población, desocupación, ITAEE) y DataMéxico (ingreso de los hogares ENIGH,
-# salario ENOE, inversión extranjera directa).
-# Excluidas a propósito hasta corregir la ingesta (prompt 07): REMESAS_FAMILIARES_MDD (valor de relleno)
-# y POB_18_MAS (mal escalada).
+# Fuentes: INEGI (PIB estatal, población, desocupación, ITAEE), DataMéxico (ingreso de los hogares ENIGH,
+# salario ENOE, inversión extranjera directa) y Banxico (remesas familiares por entidad, vía datamexico_estatal).
 view: ctx_estado {
   derived_table: {
     sql:
@@ -21,6 +19,20 @@ view: ctx_estado {
         WHERE fecha <= CURRENT_DATE()
         GROUP BY 1, 2
       ),
+      remesas AS (
+        -- Remesas trimestrales (millones de US$): suma de los últimos 4 trimestres publicados = cifra anual.
+        SELECT clave_estado_inegi,
+          SUM(valor) AS remesas_mdd,
+          MAX(fecha) AS remesas_hasta
+        FROM (
+          SELECT clave_estado_inegi, fecha, valor,
+            DENSE_RANK() OVER (ORDER BY fecha DESC) AS orden
+          FROM `@{dataset_contexto}.datamexico_estatal`
+          WHERE serie_id = 'REMESAS_FAMILIARES_MDD' AND valor IS NOT NULL
+        )
+        WHERE orden <= 4
+        GROUP BY 1
+      ),
       pivote AS (
         SELECT clave_estado_inegi,
           MAX(IF(serie_id = 'PIBE_CONST', ult[OFFSET(0)].valor, NULL)) AS pib_mdp,
@@ -37,14 +49,18 @@ view: ctx_estado {
         GROUP BY 1
       )
       SELECT c.clave_estado_inegi, c.estado_nombre, c.estado_nombre_actinver, c.abreviatura, p.* EXCEPT (clave_estado_inegi),
+        r.remesas_mdd, r.remesas_hasta,
         SAFE_DIVIDE(p.pib_mdp, SUM(p.pib_mdp) OVER ()) AS participacion_pib,
         SAFE_DIVIDE(p.ied_mdd, SUM(p.ied_mdd) OVER ()) AS participacion_ied,
+        SAFE_DIVIDE(r.remesas_mdd, SUM(r.remesas_mdd) OVER ()) AS participacion_remesas,
         SAFE_DIVIDE(p.poblacion, SUM(p.poblacion) OVER ()) AS participacion_poblacion,
         RANK() OVER (ORDER BY p.pib_mdp DESC) AS rango_pib,
         RANK() OVER (ORDER BY p.ied_mdd DESC) AS rango_ied,
+        RANK() OVER (ORDER BY r.remesas_mdd DESC) AS rango_remesas,
         RANK() OVER (ORDER BY p.ingreso_hogar DESC) AS rango_ingreso
       FROM `@{dataset_contexto}.cat_estados` c
-      LEFT JOIN pivote p USING (clave_estado_inegi) ;;
+      LEFT JOIN pivote p USING (clave_estado_inegi)
+      LEFT JOIN remesas r USING (clave_estado_inegi) ;;
   }
   label: "Estado: economía"
 
@@ -82,6 +98,13 @@ view: ctx_estado {
     sql: ${TABLE}.poblacion_anio ;;
   }
 
+  dimension: remesas_hasta {
+    type: date
+    label: "Remesas: último trimestre incluido"
+    description: "Inicio del trimestre más reciente de los 4 que suman las remesas anuales"
+    sql: ${TABLE}.remesas_hasta ;;
+  }
+
   dimension: rango_pib {
     type: number
     label: "Lugar nacional por PIB"
@@ -93,6 +116,12 @@ view: ctx_estado {
     type: number
     label: "Lugar nacional por inversión extranjera"
     sql: ${TABLE}.rango_ied ;;
+  }
+
+  dimension: rango_remesas {
+    type: number
+    label: "Lugar nacional por remesas"
+    sql: ${TABLE}.rango_remesas ;;
   }
 
   dimension: rango_ingreso {
@@ -167,6 +196,21 @@ view: ctx_estado {
     type: sum
     label: "% de la inversión extranjera nacional"
     sql: ${TABLE}.participacion_ied ;;
+    value_format: "0.0%"
+  }
+
+  measure: remesas_mdd {
+    type: sum
+    label: "Remesas familiares, últimos 12 meses (millones de US$)"
+    description: "Suma de los últimos 4 trimestres publicados por Banco de México por entidad federativa. Indica demanda de productos en dólares (Mexdólar)"
+    sql: ${TABLE}.remesas_mdd ;;
+    value_format_name: decimal_0
+  }
+
+  measure: participacion_remesas {
+    type: sum
+    label: "% de las remesas nacionales"
+    sql: ${TABLE}.participacion_remesas ;;
     value_format: "0.0%"
   }
 
