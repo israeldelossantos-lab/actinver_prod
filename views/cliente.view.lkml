@@ -8,6 +8,7 @@ view: cliente {
     sql: ${TABLE}.id_cliente_num ;;
   }
 
+
   dimension: id_cliente_num {
     type: number
     label: "ID de Cliente (Numérico)"
@@ -52,7 +53,18 @@ view: cliente {
     label: "Foto"
     description: "Avatar circular para tablas y fichas"
     sql: ${TABLE}.url_image ;;
-    html: <img src="{{ value }}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"> ;;
+    html: <img src="{{ value }}" style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:block;margin:0 auto;"> ;;
+  }
+
+  dimension: foto_perfil {
+    type: string
+    label: "Foto de perfil"
+    description: "Foto grande del cliente para la ficha (tile de un solo valor)"
+    sql: ${TABLE}.url_image ;;
+    html:
+      <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:6px 0;">
+        <img src="{{ value }}" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid #0F6FF5;box-shadow:0 8px 24px -8px rgba(11,42,91,.45);">
+      </div> ;;
   }
 
   dimension: id_asesor {

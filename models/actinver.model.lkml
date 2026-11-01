@@ -17,14 +17,16 @@ access_grant: ver_pii {
   allowed_values: ["si"]
 }
 
-# ----------------------------------------------------
+
+
 # CAPA DE MAPA: ESTADOS DE MÉXICO (TOPOJSON)
 # ----------------------------------------------------
-# map_layer: mexico_estados {
-#   file: "/maps/mexico_estados.topojson"
-#   format: topojson
-#   property_key: "state_name"
-# }
+map_layer: mexico_estados {
+  file: "/maps/mexico_estados.topojson"
+  format: topojson
+  property_key: "state_name"
+}
+
 
 # ----------------------------------------------------
 # 1. EXPLORE: CLIENTES E INVERSIONES (VISIÓN 360)
