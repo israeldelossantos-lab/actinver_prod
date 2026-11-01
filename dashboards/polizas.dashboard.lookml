@@ -1,5 +1,5 @@
 ---
-- dashboard: plizas_y_seguros__portal_actinver
+- dashboard: polizas
   title: Pólizas y Seguros — Portal Actinver
   preferred_viewer: dashboards-next
   style: modern

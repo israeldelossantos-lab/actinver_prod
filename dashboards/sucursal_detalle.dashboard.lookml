@@ -1,5 +1,5 @@
 ---
-- dashboard: detalle_de_sucursal_clientes_y_oportunidad
+- dashboard: sucursal_detalle
   title: 'Detalle de Sucursal: Clientes y Oportunidad'
   preferred_viewer: dashboards-next
   style: modern

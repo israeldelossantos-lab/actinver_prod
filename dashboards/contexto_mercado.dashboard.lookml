@@ -1,5 +1,5 @@
 ---
-- dashboard: contexto_de_mercado__portal_actinver
+- dashboard: contexto_mercado
   title: Contexto de mercado — Portal Actinver
   preferred_viewer: dashboards-next
   style: modern

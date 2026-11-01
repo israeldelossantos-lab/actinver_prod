@@ -1,5 +1,5 @@
 ---
-- dashboard: ficha_del_cliente_360
+- dashboard: ficha_cliente
   title: Ficha del Cliente 360
   preferred_viewer: dashboards-next
   style: modern

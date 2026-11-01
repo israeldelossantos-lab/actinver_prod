@@ -1,5 +1,5 @@
 ---
-- dashboard: visin_360_del_cliente__portal_actinver
+- dashboard: vision_360
   title: Visión 360 del Cliente — Portal Actinver
   preferred_viewer: dashboards-next
   style: modern

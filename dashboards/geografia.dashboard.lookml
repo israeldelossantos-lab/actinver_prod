@@ -1,5 +1,5 @@
 ---
-- dashboard: inteligencia_geogrfica
+- dashboard: geografia
   title: Inteligencia Geográfica
   preferred_viewer: dashboards-next
   style: modern

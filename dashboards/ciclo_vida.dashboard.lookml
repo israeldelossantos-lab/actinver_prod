@@ -1,5 +1,5 @@
 ---
-- dashboard: ciclo_de_vida_del_cliente__portal_actinver
+- dashboard: ciclo_vida
   title: Ciclo de Vida del Cliente — Portal Actinver
   preferred_viewer: dashboards-next
   style: modern

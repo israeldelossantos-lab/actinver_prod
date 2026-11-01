@@ -1,5 +1,5 @@
 ---
-- dashboard: desempeo_de_sucursales__portal_actinver
+- dashboard: desempeno_sucursales
   title: Desempeño de Sucursales — Portal Actinver
   preferred_viewer: dashboards-next
   style: modern
