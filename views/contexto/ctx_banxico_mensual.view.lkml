@@ -1,4 +1,4 @@
-# Historia mensual de los indicadores de Banxico (promedio del mes; inflación e INPC: último dato del mes).
+# Historia mensual de los indicadores de Banxico (promedio del mes; inflación, INPC e IPC: último dato del mes; volumen IPC: suma del mes).
 # Fuente: contexto_externo.banxico_mensual (una fila por serie y mes, desde 2015).
 view: ctx_banxico_mensual {
   sql_table_name: `@{dataset_contexto}.banxico_mensual` ;;
@@ -20,7 +20,7 @@ view: ctx_banxico_mensual {
   dimension: indicador {
     type: string
     label: "Indicador"
-    description: "Nombre corto del indicador de Banxico"
+    description: "Nombre corto del indicador de Banxico (tasas, CETES, dólar, inflación, IPC y sectores BMV)"
     sql: CASE ${TABLE}.serie_id
       WHEN 'SF61745' THEN 'Tasa objetivo'
       WHEN 'SF60648' THEN 'TIIE 28'
@@ -29,6 +29,17 @@ view: ctx_banxico_mensual {
       WHEN 'SF43718' THEN 'Dólar FIX'
       WHEN 'SP30578' THEN 'Inflación anual'
       WHEN 'SP1' THEN 'INPC'
+      WHEN 'SF43716' THEN 'IPC'
+      WHEN 'SF43713' THEN 'IPC máximo'
+      WHEN 'SF43714' THEN 'IPC mínimo'
+      WHEN 'SF43715' THEN 'IPC volumen'
+      WHEN 'SF4782' THEN 'IPC mensual'
+      WHEN 'SF364756' THEN 'Materiales'
+      WHEN 'SF364757' THEN 'Industrial'
+      WHEN 'SF364758' THEN 'Consumo no básico'
+      WHEN 'SF364759' THEN 'Consumo frecuente'
+      WHEN 'SF364760' THEN 'Financieros'
+      WHEN 'SF364761' THEN 'Telecomunicaciones'
       ELSE ${TABLE}.serie_nombre
     END ;;
   }
@@ -54,7 +65,7 @@ view: ctx_banxico_mensual {
   dimension: mes_completo {
     type: yesno
     label: "Mes completo"
-    description: "No para el mes en curso: su promedio todavía puede cambiar"
+    description: "No para el mes en curso: su valor todavía puede cambiar"
     sql: ${TABLE}.mes_completo ;;
   }
 
@@ -67,7 +78,7 @@ view: ctx_banxico_mensual {
   measure: valor {
     type: average
     label: "Valor"
-    description: "Valor del indicador en el periodo (promedio mensual). Agrupa siempre por Indicador para no mezclar unidades"
+    description: "Valor del indicador en el periodo (promedio mensual para tasas/dólar, cierre de mes para inflación/IPC, suma para volumen). Agrupa siempre por Indicador para no mezclar unidades"
     sql: ${valor_mes} ;;
     value_format_name: decimal_2
   }

@@ -14,14 +14,14 @@ view: ctx_mercado_ultimo {
   dimension: indicador {
     type: string
     label: "Indicador"
-    description: "Tasa objetivo, TIIE 28, CETES 28, CETES 91, Dólar FIX, Inflación anual o INPC"
+    description: "Tasa objetivo, TIIE 28, CETES 28, CETES 91, Dólar FIX, Inflación anual, INPC, IPC (cierre, máximo, mínimo, volumen, mensual) e índices sectoriales BMV"
     sql: ${TABLE}.serie_nombre_corto ;;
   }
 
   dimension: unidad {
     type: string
     label: "Unidad"
-    description: "Las tasas y la inflación anual están en %; el dólar en pesos por dólar; el INPC es un índice"
+    description: "Las tasas y la inflación anual están en %; el dólar en pesos por dólar; el INPC, el IPC y los sectores son índices"
     sql: CASE WHEN ${TABLE}.serie_id = 'SP30578' THEN 'Porcentaje' ELSE ${TABLE}.unidad END ;;
   }
 
@@ -63,7 +63,7 @@ view: ctx_mercado_ultimo {
   measure: cambio_1_mes {
     type: max
     label: "Cambio en 1 mes"
-    description: "En puntos base para tasas e inflación; en % para dólar e INPC"
+    description: "En puntos base para tasas e inflación; en % para dólar, INPC, IPC y sectores BMV"
     sql: ${TABLE}.cambio_1_mes ;;
     value_format_name: decimal_1
   }
@@ -71,7 +71,7 @@ view: ctx_mercado_ultimo {
   measure: cambio_12_meses {
     type: max
     label: "Cambio en 12 meses"
-    description: "En puntos base para tasas e inflación; en % para dólar e INPC"
+    description: "En puntos base para tasas e inflación; en % para dólar, INPC, IPC y sectores BMV"
     sql: ${TABLE}.cambio_12_meses ;;
     value_format_name: decimal_1
   }

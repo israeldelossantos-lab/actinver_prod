@@ -1,6 +1,6 @@
 - dashboard: ficha_cliente
-  title: "Ficha del Cliente 360"
-  description: "Detalle integral del cliente: perfil KYC, tenencia de familias de productos, comparativo radar vs red, historial y recomendación personalizada."
+  title: Ficha del Cliente 360
+  description: 'Detalle integral del cliente: perfil KYC, tenencia de familias de productos, comparativo radar vs red, historial y recomendación personalizada.'
   layout: newspaper
   preferred_viewer: dashboards-next
   crossfilter_enabled: true
@@ -9,9 +9,9 @@
 
   filters:
     - name: Cliente
-      title: "ID Cliente"
+      title: ID Cliente
       type: field_filter
-      default_value: "1001"
+      default_value: '1001'
       allow_multiple_values: false
       required: true
       ui_config:
@@ -24,9 +24,9 @@
   elements:
     - name: nav_header
       type: text
-      title_text: ""
-      subtitle_text: ""
-      body_text: "[← Volver a Visión 360](/dashboards/actinver::vision_360) · [Sucursales](/dashboards/actinver::desempeno_sucursales) · [Vinculación](/dashboards/actinver::vinculacion_cliente) · [Seguros](/dashboards/actinver::polizas) · [Ciclo de vida](/dashboards/actinver::ciclo_vida) · [Geografía](/dashboards/actinver::geografia) · [Calidad de datos](/dashboards/actinver::calidad_datos)"
+      title_text: ''
+      subtitle_text: ''
+      body_text: '[← Volver a Visión 360](/dashboards/actinver::vision_360) · [Sucursales](/dashboards/actinver::desempeno_sucursales) · [Vinculación](/dashboards/actinver::vinculacion_cliente) · [Seguros](/dashboards/actinver::polizas) · [Ciclo de vida](/dashboards/actinver::ciclo_vida) · [Geografía](/dashboards/actinver::geografia) · [Calidad de datos](/dashboards/actinver::calidad_datos) · [Contexto de mercado](/dashboards/actinver::contexto_mercado)'
       row: 0
       col: 0
       width: 24
@@ -34,209 +34,250 @@
 
     - name: header_tile
       type: text
-      body_text: "<div style='background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 16px 24px; border-left: 6px solid #0F6FF5; overflow: hidden;'><h2 style='color: #FFFFFF; font-size: 20px; font-weight: 700; margin: 0 0 4px 0;'>Ficha del Cliente 360</h2><p style='color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.4; opacity: 0.85;'>Expediente único del cliente: perfil KYC, tenencia comparativa por familia de productos, cuentas activas y propensión comercial.</p></div>"
+      body_text: '<div style=''background: linear-gradient(135deg, #0A0E12 0%, #1A2433 100%); border-radius: 12px; padding: 18px 26px; border-left: 6px solid #0F6FF5; overflow: hidden;''><h2 style=''color: #FFFFFF; font-size: 24px; font-weight: 700; margin: 0 0 4px 0;''>Ficha del Cliente 360</h2><p style=''color: #FFFFFF; font-size: 13px; margin: 0; line-height: 1.4; opacity: 0.85;''>Expediente único del cliente: perfil KYC, tenencia comparativa por familia de productos, cuentas activas y propensión comercial.</p></div>'
       row: 1
       col: 0
       width: 24
-      height: 2
+      height: 3
+
+    - name: titulo_perfil_cliente_header
+      type: text
+      title_text: ''
+      subtitle_text: ''
+      body_text: '<div style=''display:flex; align-items:center; justify-content:center; font-family: Roboto, Arial, sans-serif; font-weight:400; font-size:14px; color:#002D6F; width:100%;''><div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div>Resumen del Cliente<div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div></div>'
+      row: 4
+      col: 0
+      width: 14
+      height: 1
 
     - name: perfil_cliente_header
-      title: "Resumen del Cliente"
+      title: Resumen del Cliente
       model: actinver
       explore: clientes
       type: looker_single_record
-      fields: [
-        clientes.foto,
-        clientes.id_cliente_num,
-        clientes.tipo_persona_desc,
-        catcentrofinanciero.centro_financiero,
-        catcentrofinanciero.estado_nombre,
-        catasesor.asesor_etiqueta,
-        clientes.fecha_hora_creacion_date,
-        dt_escalera_vinculacion.escalon_vinculacion,
-        clientes.segmento_awm,
-        clientes.cliente_seguro
-      ]
+      fields: [clientes.foto, clientes.id_cliente_num, clientes.tipo_persona_desc, catcentrofinanciero.centro_financiero, catcentrofinanciero.estado_nombre, catasesor.asesor_etiqueta, clientes.fecha_hora_creacion_date, dt_escalera_vinculacion.escalon_vinculacion, clientes.segmento_awm, clientes.cliente_seguro]
       limit: 1
       show_view_names: false
       listen:
         Cliente: clientes.id_cliente_num
-      row: 1
+      row: 5
       col: 0
       width: 14
       height: 4
+      title_hidden: true
 
     - name: kpi_productos_validos
-      title: "Productos Válidos"
+      title: Productos Válidos
       model: actinver
       explore: clientes
       type: single_value
       fields: [dt_escalera_vinculacion.total_productos_validos]
       custom_color_enabled: true
-      custom_color: "#0f6ff5"
+      custom_color: '#FFFFFF'
       show_single_value_title: true
-      single_value_title: "Portafolio Activo"
-      value_format: "#,##0"
+      single_value_title: Portafolio Activo
+      value_format: '#,##0'
       listen:
         Cliente: clientes.id_cliente_num
-      row: 1
+      row: 5
       col: 14
       width: 5
       height: 2
+      conditional_formatting_include_totals: false
+      conditional_formatting_include_nulls: false
+      conditional_formatting:
+        - type: not null
+          value: []
+          background_color: '#002D6F'
+          font_color: '#FFFFFF'
 
     - name: kpi_cuentas
-      title: "Cuentas Abiertas"
+      title: Cuentas Abiertas
       model: actinver
       explore: clientes
       type: single_value
       fields: [cuenta.count]
       custom_color_enabled: true
-      custom_color: "#12998a"
+      custom_color: '#FFFFFF'
       show_single_value_title: true
-      single_value_title: "Total Cuentas"
-      value_format: "#,##0"
+      single_value_title: Total Cuentas
+      value_format: '#,##0'
       listen:
         Cliente: clientes.id_cliente_num
-      row: 1
+      row: 5
       col: 19
       width: 5
       height: 2
+      conditional_formatting_include_totals: false
+      conditional_formatting_include_nulls: false
+      conditional_formatting:
+        - type: not null
+          value: []
+          background_color: '#002D6F'
+          font_color: '#FFFFFF'
 
     - name: kpi_antiguedad
-      title: "Antigüedad (Años)"
+      title: Antigüedad (Años)
       model: actinver
       explore: clientes
       type: single_value
       fields: [clientes.fecha_hora_creacion_date]
       dynamic_fields:
         - table_calculation: antiguedad_anios
-          label: "Años"
-          expression: "round(diff_days(${clientes.fecha_hora_creacion_date}, now()) / 365.25, 1)"
+          label: Años
+          expression: round(diff_days(${clientes.fecha_hora_creacion_date}, now()) / 365.25, 1)
           value_format_name: decimal_1
       hidden_fields: [clientes.fecha_hora_creacion_date]
       custom_color_enabled: true
-      custom_color: "#ad883a"
+      custom_color: '#FFFFFF'
       show_single_value_title: true
-      single_value_title: "Años de Relación"
+      single_value_title: Años de Relación
       listen:
         Cliente: clientes.id_cliente_num
-      row: 3
+      row: 7
       col: 14
       width: 5
       height: 2
+      conditional_formatting_include_totals: false
+      conditional_formatting_include_nulls: false
+      conditional_formatting:
+        - type: not null
+          value: []
+          background_color: '#002D6F'
+          font_color: '#FFFFFF'
 
     - name: kpi_riesgo_mod
-      title: "Grado de Riesgo"
+      title: Grado de Riesgo
       model: actinver
       explore: clientes
       type: single_value
       fields: [clientes.riesgo_mod]
       custom_color_enabled: true
-      custom_color: "#8573e8"
+      custom_color: '#FFFFFF'
       show_single_value_title: true
-      single_value_title: "Nivel de Riesgo"
+      single_value_title: Nivel de Riesgo
       listen:
         Cliente: clientes.id_cliente_num
-      row: 3
+      row: 7
       col: 19
       width: 5
       height: 2
+      conditional_formatting_include_totals: false
+      conditional_formatting_include_nulls: false
+      conditional_formatting:
+        - type: not null
+          value: []
+          background_color: '#002D6F'
+          font_color: '#FFFFFF'
+
+    - name: titulo_chart_spider_tenencia
+      type: text
+      title_text: ''
+      subtitle_text: ''
+      body_text: '<div style=''display:flex; align-items:center; justify-content:center; font-family: Roboto, Arial, sans-serif; font-weight:400; font-size:14px; color:#002D6F; width:100%;''><div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div>Comparativo de Tenencia por Familia: Cliente vs Sucursal vs Red (Radar)<div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div></div>'
+      row: 9
+      col: 0
+      width: 12
+      height: 1
 
     - name: chart_spider_tenencia
-      title: "Comparativo de Tenencia por Familia: Cliente vs Sucursal vs Red (Radar)"
+      title: 'Comparativo de Tenencia por Familia: Cliente vs Sucursal vs Red (Radar)'
       model: actinver
       explore: clientes
       type: marketplace_viz_spider::spider-marketplace
-      fields: [
-        dt_tenencia_familia.nivel,
-        dt_tenencia_familia.pct_cuenta_eje,
-        dt_tenencia_familia.pct_mercado_dinero,
-        dt_tenencia_familia.pct_fondos_inversion,
-        dt_tenencia_familia.pct_mercado_capitales,
-        dt_tenencia_familia.pct_liquidez_divisas,
-        dt_tenencia_familia.pct_credito
-      ]
+      fields: [dt_tenencia_familia.nivel, dt_tenencia_familia.pct_cuenta_eje, dt_tenencia_familia.pct_mercado_dinero, dt_tenencia_familia.pct_fondos_inversion, dt_tenencia_familia.pct_mercado_capitales, dt_tenencia_familia.pct_liquidez_divisas, dt_tenencia_familia.pct_credito]
       sorts: [dt_tenencia_familia.nivel asc]
       limit: 3
       listen:
         Cliente: clientes.id_cliente_num
-      row: 5
+      row: 10
       col: 0
       width: 12
-      height: 9
+      height: 10
+      title_hidden: true
+
+    - name: titulo_table_siguiente_producto
+      type: text
+      title_text: ''
+      subtitle_text: ''
+      body_text: '<div style=''display:flex; align-items:center; justify-content:center; font-family: Roboto, Arial, sans-serif; font-weight:400; font-size:14px; color:#002D6F; width:100%;''><div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div>Siguientes Productos Sugeridos (Propensión y Lift)<div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div></div>'
+      row: 9
+      col: 12
+      width: 12
+      height: 1
 
     - name: table_siguiente_producto
-      title: "Siguientes Productos Sugeridos (Propensión y Lift)"
+      title: Siguientes Productos Sugeridos (Propensión y Lift)
       model: actinver
       explore: clientes
       type: looker_grid
-      fields: [
-        dt_siguiente_producto_sugerido.producto_1,
-        dt_siguiente_producto_sugerido.pct_1,
-        dt_siguiente_producto_sugerido.lift_1,
-        dt_siguiente_producto_sugerido.porque_1,
-        dt_siguiente_producto_sugerido.producto_2,
-        dt_siguiente_producto_sugerido.pct_2,
-        dt_siguiente_producto_sugerido.lift_2,
-        dt_siguiente_producto_sugerido.producto_3,
-        dt_siguiente_producto_sugerido.pct_3,
-        dt_siguiente_producto_sugerido.lift_3
-      ]
+      fields: [dt_siguiente_producto_sugerido.producto_1, dt_siguiente_producto_sugerido.pct_1, dt_siguiente_producto_sugerido.lift_1, dt_siguiente_producto_sugerido.porque_1, dt_siguiente_producto_sugerido.producto_2, dt_siguiente_producto_sugerido.pct_2, dt_siguiente_producto_sugerido.lift_2, dt_siguiente_producto_sugerido.producto_3, dt_siguiente_producto_sugerido.pct_3, dt_siguiente_producto_sugerido.lift_3]
       limit: 1
       show_view_names: false
       show_row_numbers: false
       table_theme: white
-      header_background_color: "#1A2433"
-      header_font_color: "#FFFFFF"
+      header_background_color: '#1A2433'
+      header_font_color: '#FFFFFF'
       listen:
         Cliente: clientes.id_cliente_num
-      row: 5
+      row: 10
       col: 12
       width: 12
       height: 4
+      title_hidden: true
+
+    - name: titulo_table_cuentas_cliente
+      type: text
+      title_text: ''
+      subtitle_text: ''
+      body_text: '<div style=''display:flex; align-items:center; justify-content:center; font-family: Roboto, Arial, sans-serif; font-weight:400; font-size:14px; color:#002D6F; width:100%;''><div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div>Cuentas y Contratos del Cliente<div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div></div>'
+      row: 14
+      col: 12
+      width: 12
+      height: 1
 
     - name: table_cuentas_cliente
-      title: "Cuentas y Contratos del Cliente"
+      title: Cuentas y Contratos del Cliente
       model: actinver
       explore: clientes
       type: looker_grid
-      fields: [
-        cuenta.cuenta_flex,
-        cuenta.fecha_apertura_date,
-        cattipocontrato.tipo_contrato,
-        cuenta.tipo_entidad_bancaria
-      ]
+      fields: [cuenta.cuenta_flex, cuenta.fecha_apertura_date, cattipocontrato.tipo_contrato, cuenta.tipo_entidad_bancaria]
       sorts: [cuenta.fecha_apertura_date desc]
       show_view_names: false
       show_row_numbers: true
       table_theme: white
-      header_background_color: "#1A2433"
-      header_font_color: "#FFFFFF"
+      header_background_color: '#1A2433'
+      header_font_color: '#FFFFFF'
       listen:
         Cliente: clientes.id_cliente_num
-      row: 9
+      row: 15
       col: 12
       width: 12
       height: 5
+      title_hidden: true
+
+    - name: titulo_table_kyc_expediente
+      type: text
+      title_text: ''
+      subtitle_text: ''
+      body_text: '<div style=''display:flex; align-items:center; justify-content:center; font-family: Roboto, Arial, sans-serif; font-weight:400; font-size:14px; color:#002D6F; width:100%;''><div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div>Expediente KYC y Validación Regulatoria<div style=''flex:1; height:2px; background-color:#002D6F; margin:0 12px;''></div></div>'
+      row: 20
+      col: 0
+      width: 24
+      height: 1
 
     - name: table_kyc_expediente
-      title: "Expediente KYC y Validación Regulatoria"
+      title: Expediente KYC y Validación Regulatoria
       model: actinver
       explore: clientes
       type: looker_grid
-      fields: [
-        clientes.id_cliente_num,
-        clientes.autorizacion_consulta_buro,
-        clientes.biometrico_facial,
-        clientes.fiel_vigente,
-        clientes.fecha_vencimiento_fiel_date
-      ]
+      fields: [clientes.id_cliente_num, clientes.autorizacion_consulta_buro, clientes.biometrico_facial, clientes.fiel_vigente, clientes.fecha_vencimiento_fiel_date]
       limit: 1
       show_view_names: false
       show_row_numbers: false
       table_theme: white
-      header_background_color: "#1A2433"
-      header_font_color: "#FFFFFF"
+      header_background_color: '#1A2433'
+      header_font_color: '#FFFFFF'
       color_application:
         collection_id: custom
         custom:
@@ -244,17 +285,18 @@
           label: Actinver azul
           type: continuous
           stops:
-            - color: "#e8f0fe"
+            - color: '#e8f0fe'
               offset: 0
-            - color: "#87b7fa"
+            - color: '#87b7fa'
               offset: 50
-            - color: "#0f6ff5"
+            - color: '#0f6ff5'
               offset: 100
         options:
           steps: 5
       listen:
         Cliente: clientes.id_cliente_num
-      row: 14
+      row: 21
       col: 0
       width: 24
       height: 4
+      title_hidden: true
