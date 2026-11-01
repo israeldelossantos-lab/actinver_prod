@@ -21,7 +21,9 @@ access_grant: ver_pii {
 
 # CAPA DE MAPA: ESTADOS DE MÉXICO (TOPOJSON)
 # ----------------------------------------------------
+
 map_layer: mexico_estados {
+  label: "México (estados)"
   file: "/maps/mexico_estados.topojson"
   format: topojson
   property_key: "state_name"
