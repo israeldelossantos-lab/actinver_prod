@@ -64,12 +64,6 @@ explore: clientes {
     relationship: one_to_one
   }
 
-  join: km_perfil_cliente {
-    type: left_outer
-    sql_on: CAST(${clientes.id_cliente_key} AS STRING) = ${km_perfil_cliente.customer_id} ;;
-    relationship: one_to_one
-  }
-
   join: catasesor {
     type: left_outer
     sql_on: ${clientes.id_asesor} = ${catasesor.id_asesor_cve} ;;
@@ -86,13 +80,6 @@ explore: clientes {
   join: dt_centro_ubicacion {
     type: left_outer
     sql_on: ${catcentrofinanciero.centro_financiero} = ${dt_centro_ubicacion.centro_financiero} ;;
-    relationship: many_to_one
-    required_joins: [catcentrofinanciero]
-  }
-
-  join: dt_denue_cerca_centro {
-    type: left_outer
-    sql_on: ${catcentrofinanciero.centro_financiero} = ${dt_denue_cerca_centro.centro_financiero} ;;
     relationship: many_to_one
     required_joins: [catcentrofinanciero]
   }
@@ -351,15 +338,9 @@ explore: contexto_estatal {
   }
 }
 
-# 10. PROSPECTOS EMPRESARIALES: DENUE de INEGI
-explore: prospectos_empresariales {
-  from: ctx_denue_estado
-  label: "10. Prospectos Empresariales (DENUE INEGI)"
-  description: "Establecimientos económicos por estado, sector SCIAN y tamaño (micro, pequeña, mediana y grande) para prospección comercial de Actinver"
-
-  join: ctx_estado {
-    type: left_outer
-    sql_on: ${prospectos_empresariales.clave_estado_inegi} = ${ctx_estado.clave_estado_inegi} ;;
-    relationship: many_to_one
-  }
+# 10. SUCURSALES OFICIALES: 48 sucursales físicas oficiales de actinver.com con coordenadas GPS
+explore: sucursales_oficiales {
+  from: cat_sucursales_oficiales
+  label: "10. Sucursales Oficiales (Actinver)"
+  description: "Catálogo oficial de las 48 sucursales físicas de Actinver en México con ubicación satelital GPS verificada, enlaces directos a Google Maps y región comercial"
 }
