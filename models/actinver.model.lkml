@@ -348,3 +348,49 @@ explore: sucursales_oficiales {
   label: "10. Sucursales Oficiales (Actinver)"
   description: "Catálogo oficial de las 48 sucursales físicas de Actinver en México con ubicación satelital GPS verificada, enlaces directos a Google Maps y región comercial"
 }
+
+# ----------------------------------------------------
+# SEGUROS: mercado asegurador mexicano (CNSF) en vertex-ia-503623.contexto_externo
+# ----------------------------------------------------
+
+# 11. MERCADO DE SEGUROS (CNSF): tamaño por ramo y estado, siniestralidad y agentes
+explore: mercado_seguros {
+  from: ctx_cnsf_mercado_ramo
+  label: "11. Mercado de Seguros (CNSF Benchmark)"
+  description: "Tamaño del mercado asegurador mexicano por ramo y estado (2015-2025), siniestralidad sectorial y fuerza de agentes por estado"
+
+  join: ctx_cnsf_mercado_entidad {
+    type: left_outer
+    sql_on: ${mercado_seguros.anio} = ${ctx_cnsf_mercado_entidad.anio}
+        AND ${mercado_seguros.ramo_normalizado} = ${ctx_cnsf_mercado_entidad.ramo_normalizado} ;;
+    relationship: one_to_many
+  }
+
+  join: ctx_cnsf_agentes_entidad {
+    type: left_outer
+    sql_on: ${ctx_cnsf_mercado_entidad.clave_estado_inegi} = ${ctx_cnsf_agentes_entidad.clave_estado_inegi} ;;
+    relationship: many_to_one
+  }
+}
+
+# 12. ACTINVER VS MERCADO: explore propio (la vista ya trae la prima del mercado 2025).
+# Unirla a mercado_seguros por ramo repetía la prima de Actinver una vez por año (11 años).
+explore: actinver_vs_mercado {
+  from: ctx_actinver_vs_mercado_ramo
+  label: "12. Actinver vs Mercado (CNSF)"
+  description: "Prima Actinver anualizada contra el cierre CNSF 2025 por ramo. Incluye MME sin ramo asignado."
+}
+
+# 13. ASEGURADORAS: ranking, primas, siniestralidad y utilidad por institución (CNSF)
+explore: aseguradoras_cnsf {
+  from: ctx_cnsf_ranking_aseguradoras
+  label: "13. Aseguradoras (CNSF)"
+  description: "Ranking de aseguradoras por prima, con siniestralidad, costo de adquisición y utilidad técnica y neta"
+}
+
+# 14. RECLAMACIONES: pólizas en vigor y reclamaciones por estado y ramo (CNSF)
+explore: reclamaciones_cnsf {
+  from: ctx_cnsf_polizas_reclamaciones
+  label: "14. Pólizas y Reclamaciones por Estado (CNSF)"
+  description: "Pólizas en vigor, reclamaciones recibidas y reclamaciones por cada mil pólizas, por estado y ramo"
+}
