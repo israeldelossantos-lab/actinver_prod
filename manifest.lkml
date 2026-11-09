@@ -40,3 +40,22 @@ constant: umbral_critico_dias {
   value: "30"
   export: none
 }
+
+
+application: portal_actinver {
+  label: "Portal Actinver"
+  file: "views/portal_actinver.js"
+  mount_points: {
+    standalone: yes
+    dashboard_tile: yes
+  }
+  entitlements: {
+    use_embeds: yes
+    core_api_methods: [
+      "search_agents",
+      "create_conversation",
+      "conversational_analytics_chat",
+      "create_conversation_message"
+    ]
+  }
+}
