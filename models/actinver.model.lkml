@@ -107,6 +107,44 @@ explore: clientes {
     relationship: many_to_one
     required_joins: [cuenta]
   }
+
+  # Copiloto: datos de demostración
+  join: cliente_nombre_demo {
+    type: left_outer
+    sql_on: CAST(${clientes.id_cliente_key} AS STRING) = CAST(${cliente_nombre_demo.id_cliente_num} AS STRING) ;;
+    relationship: one_to_one
+  }
+
+  join: asesor_nombre_demo {
+    type: left_outer
+    sql_on: CAST(${clientes.id_asesor} AS STRING) = CAST(${asesor_nombre_demo.id_asesor_cve} AS STRING) ;;
+    relationship: many_to_one
+  }
+
+  join: saldo_producto_demo {
+    type: left_outer
+    sql_on: CAST(${clientes.id_cliente_key} AS STRING) = CAST(${saldo_producto_demo.id_cliente_num} AS STRING) ;;
+    relationship: one_to_many
+  }
+
+  join: vencimiento_inversion {
+    type: left_outer
+    sql_on: CAST(${clientes.id_cliente_key} AS STRING) = CAST(${vencimiento_inversion.id_cliente_num} AS STRING) ;;
+    relationship: one_to_many
+  }
+
+  join: dt_ultimo_contacto {
+    from: dt_ultimo_contacto
+    type: left_outer
+    sql_on: CAST(${clientes.id_cliente_key} AS STRING) = CAST(${dt_ultimo_contacto.id_cliente_num} AS STRING) ;;
+    relationship: one_to_one
+  }
+
+  join: contacto_asesor {
+    type: left_outer
+    sql_on: CAST(${clientes.id_cliente_key} AS STRING) = CAST(${contacto_asesor.id_cliente_num} AS STRING) ;;
+    relationship: one_to_many
+  }
 }
 
 # ----------------------------------------------------
@@ -393,4 +431,38 @@ explore: reclamaciones_cnsf {
   from: ctx_cnsf_polizas_reclamaciones
   label: "14. Pólizas y Reclamaciones por Estado (CNSF)"
   description: "Pólizas en vigor, reclamaciones recibidas y reclamaciones por cada mil pólizas, por estado y ramo"
+}
+
+# ----------------------------------------------------
+# 15. EXPLORE: COPILOTO - AVISOS POR CLIENTE
+# ----------------------------------------------------
+explore: cliente_avisos {
+  from: dt_avisos_copiloto
+  label: "15. Copiloto: Avisos por Cliente (Demo)"
+  description: "Avisos proactivos para la app del cliente: vencimientos próximos, afinidad de producto y clientes desatendidos por su asesor"
+
+  join: cliente_nombre_demo {
+    type: left_outer
+    sql_on: CAST(${cliente_avisos.id_cliente_num} AS STRING) = CAST(${cliente_nombre_demo.id_cliente_num} AS STRING) ;;
+    relationship: many_to_one
+  }
+
+  join: asesor_nombre_demo {
+    type: left_outer
+    sql_on: CAST(${cliente_avisos.id_asesor_cve} AS STRING) = CAST(${asesor_nombre_demo.id_asesor_cve} AS STRING) ;;
+    relationship: many_to_one
+  }
+
+  join: clientes {
+    from: cliente
+    type: left_outer
+    sql_on: CAST(${cliente_avisos.id_cliente_num} AS STRING) = CAST(${clientes.id_cliente_key} AS STRING) ;;
+    relationship: many_to_one
+  }
+
+  join: catasesor {
+    type: left_outer
+    sql_on: ${clientes.id_asesor} = ${catasesor.id_asesor_cve} ;;
+    relationship: many_to_one
+  }
 }

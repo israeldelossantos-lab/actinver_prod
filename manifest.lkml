@@ -22,6 +22,12 @@ constant: dataset_contexto {
   export: none
 }
 
+# Datos sintéticos para demostración del copiloto (app móvil)
+constant: dataset_copiloto {
+  value: "vertex-ia-503623.demo_copiloto"
+  export: none
+}
+
 # Retrocompatibilidad general
 constant: dataset_actinver {
   value: "vertex-ia-503623.spine"
